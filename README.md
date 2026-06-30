@@ -1,10 +1,10 @@
 # Your Energy
 
-> Adaptive fitness-exercise catalog with filtering, favorites, detail modals, ratings, and a newsletter subscription. Team project for the **MSc in Software Engineering & AI**, built on a **vanilla stack — no frameworks**.
+> Adaptive fitness-exercise catalog with filtering, favorites, detail modals, ratings, and a newsletter subscription. Team project for the **MSc in Software Engineering & AI**, built with **Astro (static site) + vanilla-JS islands — no UI framework**.
 
 <p>
+  <img alt="Astro" src="https://img.shields.io/badge/Astro-7-ff5d01?logo=astro&logoColor=fff" />
   <img alt="Vanilla JS" src="https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?logo=javascript&logoColor=000" />
-  <img alt="Vite" src="https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=fff" />
   <img alt="SCSS" src="https://img.shields.io/badge/SCSS-modular-cc6699?logo=sass&logoColor=fff" />
   <img alt="Code style: Prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4?logo=prettier&logoColor=fff" />
 </p>
@@ -33,7 +33,7 @@
 
 ## Features
 
-- **Two pages** — Home (catalog) and Favorites, built as a multi-page Vite app.
+- **Two pages** — Home (catalog) and Favorites, pre-rendered as static HTML by Astro.
 - **Filtering** by Muscles / Body parts / Equipment with server-side pagination.
 - **Search** within a selected category (submit-driven).
 - **Exercise modal** with details, rating, and add/remove favorites.
@@ -45,63 +45,66 @@
 
 ## Tech Stack
 
-| Area          | Choice                                                                       |
-| ------------- | ---------------------------------------------------------------------------- |
-| Markup        | HTML (two entry points: `index.html`, `favorites.html`)                      |
-| Styles        | SCSS — modular architecture (`abstracts` / `base` / `layout` / `pages`)      |
-| Logic         | JavaScript ES6+ — DOM rendering via template literals (no template engine)   |
-| HTTP          | [Axios](https://axios-http.com/) — single instance + interceptors            |
-| Notifications | [iziToast](https://izitoast.marcelodolza.com/), wrapped in `utils/notify.js` |
-| Build         | [Vite](https://vitejs.dev/) — multi-page                                     |
-| State         | Tiny custom observable store + `localStorage` services                       |
-| Tooling       | ESLint (flat config), Prettier, Husky, lint-staged, EditorConfig, `.nvmrc`   |
-| CI / Deploy   | GitHub Actions (quality gate) + GitHub Pages                                 |
+| Area          | Choice                                                                                   |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| Framework     | [Astro 7](https://astro.build/) — static output (`output: 'static'`), islands            |
+| Markup        | `.astro` components — `src/pages/*.astro` + shared `src/layouts/BaseLayout.astro`        |
+| Styles        | SCSS — global system (`abstracts`/`base`/`layout`) + scoped `<style>` per page           |
+| Logic         | JavaScript ES6+ — vanilla islands; DOM rendering via template literals (no engine)       |
+| HTTP          | [Axios](https://axios-http.com/) — single instance + interceptors                        |
+| Notifications | [iziToast](https://izitoast.marcelodolza.com/), wrapped in `utils/notify.js`             |
+| SEO           | Canonical + Open Graph/Twitter + JSON-LD in the layout, `@astrojs/sitemap`, robots.txt   |
+| State         | Tiny custom observable store + `localStorage` services                                   |
+| Tooling       | ESLint (flat config), Prettier (+ `prettier-plugin-astro`), Husky, lint-staged, `.nvmrc` |
+| CI / Deploy   | GitHub Actions (quality gate) + GitHub Pages (`withastro/action` + `deploy-pages`)       |
 
 ## Getting Started
 
-**Prerequisites:** Node `>=20` (pinned in [`.nvmrc`](.nvmrc)).
+**Prerequisites:** Node `>=22.12.0` (required by Astro 7; pinned in [`.nvmrc`](.nvmrc)). Odd-numbered Node releases are not supported.
 
 ```bash
 nvm use            # match the pinned Node version
 npm install        # also installs the Husky git hooks (via "prepare")
-npm run dev        # Vite dev server → http://localhost:5173
+npm run dev        # Astro dev server → http://localhost:4321
 ```
 
 ## Scripts
 
-| Command                | Description                                       |
-| ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | Start the Vite dev server.                        |
-| `npm run build`        | Production build of **both** pages into `dist/`.  |
-| `npm run preview`      | Preview the production build locally.             |
-| `npm run lint`         | Lint all sources with ESLint.                     |
-| `npm run lint:fix`     | Lint and auto-fix.                                |
-| `npm run format`       | Format the codebase with Prettier (writes files). |
-| `npm run format:check` | Verify formatting without writing (used in CI).   |
+| Command                | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| `npm run dev`          | Start the Astro dev server.                            |
+| `npm run build`        | Static build of **both** pages + sitemap into `dist/`. |
+| `npm run preview`      | Preview the production build locally.                  |
+| `npm run lint`         | Lint all JS sources with ESLint.                       |
+| `npm run lint:fix`     | Lint and auto-fix.                                     |
+| `npm run format`       | Format the codebase with Prettier (writes files).      |
+| `npm run format:check` | Verify formatting without writing (used in CI).        |
 
 ## Project Structure
 
 ```
 your-energy/
-├── public/                  # static assets served as-is (favicon, robots.txt)
-├── .github/                 # CI workflow + CODEOWNERS
-├── index.html               # Home entry
-├── favorites.html           # Favorites entry
+├── public/                  # static assets served as-is (favicon, og-image, robots.txt)
+├── .github/                 # CI + deploy workflows + CODEOWNERS
+├── astro.config.mjs         # Astro config: site, base, sitemap, SCSS
+├── tsconfig.json            # extends astro/tsconfigs/base (editor IntelliSense)
 └── src/
+    ├── pages/               # index.astro, favorites.astro — routed pages
+    ├── layouts/             # BaseLayout.astro — shared <head>/SEO + chrome
     ├── api/                 # Axios instance, normalizers, endpoint modules (no DOM)
-    ├── components/          # feature components (.js + .scss co-located)
+    ├── components/          # components: *.astro (markup) + *.js/*.scss co-located
     │   └── ui/              # reusable primitives (button, loader, badge, …)
     ├── services/            # store, favorites, cache, storage (state orchestration)
     ├── utils/               # constants, validators, notify, api-events
-    ├── styles/              # abstracts / base / layout / pages + main.scss
-    └── pages/               # home.js, favorites.js — page bootstraps
+    ├── styles/              # abstracts / base / layout + main.scss (global system)
+    └── env.d.ts             # Astro type references
 ```
 
 ## Architecture
 
 Organized **by feature, not by type**, with strict layer boundaries:
 
-- **`api/`** never touches the DOM. All HTTP goes through the shared `http` instance ([`api/instance.js`](src/api/instance.js)); loader and toast side effects are emitted as events and wired in [`api/connect-ui.js`](src/api/connect-ui.js) at page bootstrap.
+- **`api/`** never touches the DOM. All HTTP goes through the shared `http` instance ([`api/instance.js`](src/api/instance.js)); loader and toast side effects are emitted as events and wired once via [`api/connect-ui.js`](src/api/connect-ui.js) in the layout script.
 - **`services/`** never call the backend directly — they orchestrate `api/` together with the store, cache, and storage.
 - **`components/`** only render and listen for events. They read shared state from [`services/store.service.js`](src/services/store.service.js) and persist favorites via [`services/favorites.service.js`](src/services/favorites.service.js).
 - **No raw `localStorage` / `JSON.parse`** outside [`services/storage.service.js`](src/services/storage.service.js).
@@ -109,21 +112,20 @@ Organized **by feature, not by type**, with strict layer boundaries:
 
 ### Layer model
 
-Dependency direction is **one-way**: `pages → components → services → api`. `utils` is shared everywhere; `styles` are consumed by pages and components. Interceptors emit UI events via [`utils/api-events.js`](src/utils/api-events.js); each page entry calls [`connectApiUi()`](src/api/connect-ui.js) once to attach the loader and toasts — `api/` itself stays UI-agnostic.
+Dependency direction is **one-way**: `pages (.astro) → layout → components (.astro islands) → services → api`. `utils` is shared everywhere; `styles` are consumed by the layout and components. Astro pre-renders pages to static HTML; a component adds a co-located `<script>` to hydrate its island on the client only when it needs interactivity. Interceptors emit UI events via [`utils/api-events.js`](src/utils/api-events.js); the layout calls [`connectApiUi()`](src/api/connect-ui.js) once to attach the loader and toasts — `api/` itself stays UI-agnostic.
 
 ```mermaid
 flowchart TB
-  subgraph L1["① Entry"]
+  subgraph L1["① Entry — pages + layout"]
     direction LR
-    IDX["index.html"]
-    FAV_HTML["favorites.html"]
-    HOME_JS["pages/home.js"]
-    FAV_JS["pages/favorites.js"]
-    IDX --> HOME_JS
-    FAV_HTML --> FAV_JS
+    IDX["pages/index.astro"]
+    FAV["pages/favorites.astro"]
+    LAYOUT["layouts/BaseLayout.astro\n(SEO head · header · footer · connectApiUi)"]
+    IDX --> LAYOUT
+    FAV --> LAYOUT
   end
 
-  subgraph L2["② Presentation — components/"]
+  subgraph L2["② Presentation — components/ (.astro islands)"]
     direction TB
     SECTIONS["Sections: header · hero · filters · cards · pagination · quote · footer"]
     MODALS["Modals: exercise-modal · rating-modal"]
@@ -181,11 +183,11 @@ flowchart TB
 
 ### Pages & components
 
-Each HTML page declares empty `[data-component]` slots; the matching `pages/*.js` file mounts components on `DOMContentLoaded`. Modals are **not** mounted on load — they open on user action.
+Each page composes `.astro` components inside `BaseLayout`. Every section renders its structure to **static HTML at build time**, then hydrates as an [island](https://docs.astro.build/en/concepts/islands/) via a co-located `<script>` that calls its `init<Name>(root)` seam — browser JS ships per component, only for what's wired ([Astro: client-side scripts](https://docs.astro.build/en/guides/client-side-scripts/)). Modals are **not** rendered on load — they open on user action.
 
 ```mermaid
 flowchart TB
-  subgraph HOME["Home — index.html → home.js"]
+  subgraph HOME["Home — index.astro"]
     direction TB
     H_HEADER["header"]
     H_HERO["hero"]
@@ -198,7 +200,7 @@ flowchart TB
     H_SCROLL["scroll-up"]
   end
 
-  subgraph FAVORITES["Favorites — favorites.html → favorites.js"]
+  subgraph FAVORITES["Favorites — favorites.astro"]
     direction TB
     F_HEADER["header"]
     F_LIST["favorites-list → exercise-card"]
@@ -260,7 +262,7 @@ sequenceDiagram
 
 ## Working in `src/` (per-folder guide)
 
-What belongs in each folder, the rules, and a minimal example. The dependency direction is one-way: `pages → components → services → api`, with `utils` shared by all and `styles` consumed by `components`/`pages`. Never import "upwards" (e.g. `api` importing a component). UI side effects from interceptors go through [`utils/api-events.js`](src/utils/api-events.js) and are wired in [`api/connect-ui.js`](src/api/connect-ui.js) at page bootstrap.
+What belongs in each folder, the rules, and a minimal example. The dependency direction is one-way: `pages → layout → components → services → api`, with `utils` shared by all and `styles` consumed by the layout/`components`. Never import "upwards" (e.g. `api` importing a component). UI side effects from interceptors go through [`utils/api-events.js`](src/utils/api-events.js) and are wired once in [`api/connect-ui.js`](src/api/connect-ui.js) from the layout.
 
 ### `src/api/` — backend access
 
@@ -318,54 +320,69 @@ export async function loadExercises() {
 
 ### `src/components/` — views
 
-Feature components and reusable `ui/` primitives, each as co-located `*.js` + `*.scss`. A component **renders markup, wires its own listeners, and reads/writes the store** — it never calls the API directly. See [Rendering Components](#rendering-components-template-literals) for the full pattern.
+Feature components are `.astro` files (static markup + optional co-located `<script>`); reusable `ui/` primitives are framework-agnostic `*.js` helpers. Component styles live in co-located `*.scss`. A component **renders markup and, when interactive, wires its own listeners and reads/writes the store** — it never calls the API directly. See [Rendering Components](#rendering-components-template-literals) for the full pattern.
 
-```js
-// example — what a finished component looks like (load → render → mount)
-import { getQuote } from '../../api/quote.api.js';
-import { escapeHtml } from '../../utils/escape-html.js';
+**Where component logic lives:**
 
-export async function mountQuote(root) {
-  const { quote, author } = await getQuote();
-  root.innerHTML = `
-    <figure class="quote">
-      <blockquote>${escapeHtml(quote)}</blockquote>
-      <figcaption>${escapeHtml(author)}</figcaption>
-    </figure>`;
-}
+- **Cross-cutting logic** (HTTP, store, cache, storage, validators, events) → `api/`, `services/`, `utils/`. Framework-agnostic ESM, imported by any island.
+- **Component logic** → a co-located `<name>.client.js` module next to the `.astro`, exporting `init<Name>(root)` and wired by a thin `<script>`. This keeps one folder per component and one obvious home for browser logic.
+
+Every section follows the **uniform island contract** — `Component.astro` (static host with a `data-component` hook) + `<name>.client.js` (`init<Name>(root)` seam) + `<script>` that wires them:
+
+```astro
+<figure class="quote" data-component="quote">
+  <div class="placeholder">Quote of the day</div>
+</figure>
+
+<script>
+  import { initQuote } from './quote.client.js';
+
+  initQuote(document.querySelector('[data-component="quote"]'));
+</script>
 ```
 
-> **Current state — everything is a wired placeholder, so the app renders out of the box.** Each component is a stub in one of three shapes; replace the markup and add logic, but keep the exported signature so the wiring stays untouched:
+> **Current state — the contract is wired everywhere; logic is stubbed except two working references.** Each section renders a visible dashed placeholder at build time and calls its `init<Name>(root)` seam on the client. Fill the seam (reuse `api/` + `services/` + `utils/`) and keep the `data-component` hook so loaders/queries keep targeting it.
 >
-> - **Sections** (`header`, `hero`, `filters`, `category-card`, `exercise-card`, `pagination`, `quote`, `daily-norm`, `footer`, `scroll-up`) export `mount<Name>(root)` and are already called in both page bootstraps → visible dashed placeholder boxes.
-> - **Modals** (`exercise-modal`, `rating-modal`) export `open<Name>(...)` and open on user action (not on load). The shell — backdrop, close button, X / backdrop / Escape handling, listener cleanup, and "one modal at a time" — lives in the `ui/modal` primitive ([`openModal`](src/components/ui/modal/modal.js)); each modal supplies only its body content.
-> - **Primitives** (`ui/button`, `ui/badge`, `ui/rating-stars`) export pure `render<Name>(props)` helpers composed inside sections; `ui/loader` and `ui/modal` are the functional primitives (loader + modal shell). Never mount a primitive standalone or duplicate it inside a feature.
->
-> The snippet above shows what a finished section component looks like.
+> - **Sections** (`header`, `hero`, `filters`, `category-card`, `exercise-card`, `pagination`, `daily-norm`, `footer`) ship a static placeholder + an empty `init<Name>(root)` seam ready to implement.
+> - **Working references** — [`quote`](src/components/quote/quote.client.js) (fetch + per-day cache + render) and [`scroll-up`](src/components/ui/scroll-up/scroll-up.client.js) (show-on-scroll + scroll-to-top) are implemented end-to-end as templates.
+> - **Modals** (`exercise-modal`, `rating-modal`) export `open<Name>(...)` and open on user action (not on load). The shell — backdrop, close button, X / backdrop / Escape handling, **focus trap, body scroll lock, focus restore, accessible name**, listener cleanup, and "one modal at a time" — lives in the `ui/modal` primitive ([`openModal`](src/components/ui/modal/modal.js)); each modal supplies only its body content and an `aria-label`.
+> - **`ui/` primitives are JS by design, not `.astro`.** Lists (categories, exercises, pagination) are rendered on the client via `innerHTML`, and an `.astro` component cannot be embedded in a runtime HTML string. So `ui/button`, `ui/badge`, `ui/rating-stars` export pure `render<Name>(props)` string builders composed inside those client islands; `ui/loader` and `ui/modal` are imperative runtime primitives (overlay + modal shell). Converting them to `.astro` would create an unusable second source of truth — avoid it.
 
-### `src/pages/` — entry points
+### `src/pages/` — routed pages
 
-Thin bootstraps — `home.js` and `favorites.js`. They import the global stylesheet, call [`connectApiUi()`](src/api/connect-ui.js) once to wire loader/toast handlers, then mount the page's components. **No rendering logic here** — delegate to components/services.
+File-based routes — `index.astro` (Home) and `favorites.astro`. Each wraps its content in `BaseLayout`, composes `.astro` components, and authors the page-section layout in a scoped `<style lang="scss">`. **No bootstrap/rendering logic here** — components own their own client scripts.
 
-```js
-// pages/home.js
-import 'modern-normalize';
-import { connectApiUi } from '../api/connect-ui.js';
-import '../styles/main.scss';
-import { mountQuote } from '../components/quote/quote.js';
+```astro
+---
+import Hero from '../components/hero/Hero.astro';
+import Quote from '../components/quote/Quote.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
 
-function bootstrap() {
-  connectApiUi();
-  mountQuote(document.querySelector('[data-component="quote"]'));
-  // mount header, filters, category list, pagination, footer…
-}
+<BaseLayout title="Your Energy" description="Fitness exercises catalog">
+  <main>
+    <h1 class="visually-hidden">Your Energy — fitness exercises catalog</h1>
+    <Hero />
+    <Quote />
+  </main>
+</BaseLayout>
 
-document.addEventListener('DOMContentLoaded', bootstrap);
+<style lang="scss">
+  @use '../styles/abstracts' as *; // tokens/mixins only — emits no CSS
+
+  .exercises {
+    padding-block: 40px;
+  }
+</style>
 ```
+
+### `src/layouts/` — shared shell
+
+[`BaseLayout.astro`](src/layouts/BaseLayout.astro) owns the document shell: `<head>` SEO (title, description, canonical, Open Graph/Twitter, JSON-LD, favicon, sitemap link), global styles (`modern-normalize` + `main.scss`), the shared chrome (`Header`, `Footer`, `ScrollUp`, `#modal-root`), and the single `connectApiUi()` call that wires loader/toasts. Pages pass `title` / `description` (and optional `ogImage`) as props.
 
 ### `src/styles/` — SCSS system
 
-`abstracts/` (design tokens, mixins, functions — **emits no CSS**), `base/` (reset, typography, global), `layout/`, `pages/`, and the [`main.scss`](src/styles/main.scss) aggregator. Component styles are co-located with the component and `@use`'d from `main.scss`.
+`abstracts/` (design tokens, mixins, functions — **emits no CSS**), `base/` (reset, typography, global), `layout/`, and the [`main.scss`](src/styles/main.scss) aggregator (global, imported in `BaseLayout`). Component styles are co-located and `@use`'d from `main.scss`; **page-section layout lives in the scoped `<style>` of each `.astro` page** (hybrid: global system + scoped per page).
 
 ```scss
 // components/exercise-card/exercise-card.scss
@@ -449,7 +466,7 @@ container.addEventListener('click', (event) => {
 
 ### Loading Indicator (loader)
 
-The loader is **fully centralized in the Axios interceptors** — feature code never calls `showLoader` / `hideLoader`. Interceptors emit `loader:show` / `loader:hide` events; [`connectApiUi()`](src/api/connect-ui.js) attaches the loader handlers at page bootstrap. Each request declares a target via `config.meta.loader`. Targets are reference-counted by **selector string** (not DOM node reference), so parallel requests to the same target won't hide it early and re-renders of a local container won't orphan the overlay.
+The loader is **fully centralized in the Axios interceptors** — feature code never calls `showLoader` / `hideLoader`. Interceptors emit `loader:show` / `loader:hide` events; [`connectApiUi()`](src/api/connect-ui.js) attaches the loader handlers once from `BaseLayout`. Each request declares a target via `config.meta.loader`. Targets are reference-counted by **selector string** (not DOM node reference), so parallel requests to the same target won't hide it early and re-renders of a local container won't orphan the overlay.
 
 ```js
 import { LOADER } from '../utils/constants.js';
@@ -493,7 +510,7 @@ Email contract (rating + subscription): `^\w+(\.\w+)?@[a-zA-Z_]+?\.[a-zA-Z]{2,3}
 Quality is enforced at two layers:
 
 - **On commit** — Husky runs `lint-staged`, which auto-fixes staged files (`eslint --fix` + `prettier --write` for JS, `prettier --write` for SCSS/JSON/MD). Badly formatted code is corrected before it lands.
-- **On push / pull request** — the [GitHub Actions workflow](.github/workflows/code-quality.yml) runs on `develop` and `main`: `lint`, `format:check`, and `build`. A red check blocks the merge when branch protection requires status checks.
+- **On push / pull request** — the [code-quality workflow](.github/workflows/code-quality.yml) runs on `develop` and `main`: `lint`, `format:check`, and `build`. A red check blocks the merge when branch protection requires status checks. A separate [deploy workflow](.github/workflows/deploy.yml) publishes to GitHub Pages on push to `main`.
 
 Run the full gate locally before opening a PR:
 
@@ -505,9 +522,11 @@ npm run build
 
 ## Deployment
 
-Deployed to **GitHub Pages** from the `main` branch. Day-to-day development happens on `develop`; merge `develop` → `main` via pull request when a release is ready.
+Deployed to **GitHub Pages** by the [`deploy.yml`](.github/workflows/deploy.yml) workflow on push to `main` (via `withastro/action` + [`actions/deploy-pages`](https://github.com/actions/deploy-pages)). Day-to-day development happens on `develop`; merge `develop` → `main` via pull request when a release is ready.
 
-The Vite `base` in [`vite.config.js`](vite.config.js) must match the repository name (`/your-energy/`); override it with the `VITE_BASE` env var if the repo is named differently.
+Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once in the repository.
+
+`site` and `base` are configured in [`astro.config.mjs`](astro.config.mjs): `site: https://deluminor.github.io`, `base: /your-energy`. For a different repo name or a custom domain, override the base via the `ASTRO_BASE` env var (e.g. `ASTRO_BASE=/` for a root/custom-domain deploy).
 
 ## Contributing
 

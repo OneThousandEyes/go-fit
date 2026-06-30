@@ -1,0 +1,14 @@
+<button
+  class="scroll-up"
+  data-component="scroll-up"
+  type="button"
+  aria-label="Scroll to top"
+>
+  ↑
+</button>
+
+<script>
+  import { initScrollUp } from './scroll-up.client.js';
+
+  initScrollUp(document.querySelector('[data-component="scroll-up"]'));
+</script>

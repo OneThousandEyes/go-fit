@@ -1,0 +1,22 @@
+---
+type ButtonType = 'button' | 'submit' | 'reset';
+type ButtonVariant = 'primary' | 'ghost';
+
+interface Props {
+  label?: string;
+  type?: ButtonType;
+  variant?: ButtonVariant;
+  class?: string;
+}
+
+const {
+  label,
+  type = 'button',
+  variant = 'primary',
+  class: className,
+} = Astro.props;
+---
+
+<button class:list={['button', `button--${variant}`, className]} type={type}>
+  {label}<slot />
+</button>
