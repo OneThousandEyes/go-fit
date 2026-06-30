@@ -1,0 +1,26 @@
+// Colors
+$color-text: #1b1b1b;
+$color-text-muted: #5b5b5b;
+$color-bg: #fbfbfb;
+$color-accent: #ef8964;
+$color-border: rgba(27, 27, 27, 0.1);
+$color-white: #ffffff;
+
+// Typography
+$font-primary: 'DM Sans', sans-serif;
+
+// Layout
+$container-max: 1440px;
+$container-pad-mobile: 20px; // 375
+$container-pad-tablet: 32px; // 768
+$container-pad-desktop: 32px; // 1440
+
+// Breakpoints
+$bp-mobile: 375px;
+$bp-tablet: 768px;
+$bp-desktop: 1440px;
+
+// Radii / motion
+$radius-sm: 12px;
+$radius-md: 24px;
+$transition: 250ms ease;

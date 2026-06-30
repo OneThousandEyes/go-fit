@@ -1,0 +1,28 @@
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/global';
+
+@use 'layout/container';
+
+@use 'pages/home';
+@use 'pages/favorites';
+
+// Component styles (co-located with their .js, aggregated here).
+@use '../components/ui/button/button';
+@use '../components/ui/rating-stars/rating-stars';
+@use '../components/ui/badge/badge';
+@use '../components/ui/loader/loader';
+@use '../components/ui/modal/modal';
+@use '../components/ui/scroll-up/scroll-up';
+
+@use '../components/header/header';
+@use '../components/hero/hero';
+@use '../components/filters/filters';
+@use '../components/category-card/category-card';
+@use '../components/daily-norm/daily-norm';
+@use '../components/exercise-card/exercise-card';
+@use '../components/exercise-modal/exercise-modal';
+@use '../components/rating-modal/rating-modal';
+@use '../components/pagination/pagination';
+@use '../components/quote/quote';
+@use '../components/footer/footer';
