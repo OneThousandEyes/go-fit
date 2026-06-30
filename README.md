@@ -17,6 +17,10 @@
 - [Scripts](#scripts)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
+  - [Overview](#overview)
+  - [Layer model](#layer-model)
+  - [Pages & components](#pages--components)
+  - [Data flow](#data-flow)
 - [Working in `src/` (per-folder guide)](#working-in-src-per-folder-guide)
 - [Usage Guide](#usage-guide)
   - [Shared State (store)](#shared-state-store)
@@ -102,6 +106,154 @@ Organized **by feature, not by type**, with strict layer boundaries:
 - **`components/`** only render and listen for events. They read shared state from [`services/store.service.js`](src/services/store.service.js) and persist favorites via [`services/favorites.service.js`](src/services/favorites.service.js).
 - **No raw `localStorage` / `JSON.parse`** outside [`services/storage.service.js`](src/services/storage.service.js).
 - **No barrel imports** — import directly from the source file.
+
+### Layer model
+
+Dependency direction is **one-way**: `pages → components → services → api`. `utils` is shared everywhere; `styles` are consumed by pages and components. The only intentional upward edge is `api/instance.js → ui/loader` (interceptors drive the loader).
+
+```mermaid
+flowchart TB
+  subgraph L1["① Entry"]
+    direction LR
+    IDX["index.html"]
+    FAV_HTML["favorites.html"]
+    HOME_JS["pages/home.js"]
+    FAV_JS["pages/favorites.js"]
+    IDX --> HOME_JS
+    FAV_HTML --> FAV_JS
+  end
+
+  subgraph L2["② Presentation — components/"]
+    direction TB
+    SECTIONS["Sections: header · hero · filters · cards · pagination · quote · footer"]
+    MODALS["Modals: exercise-modal · rating-modal"]
+    UI["ui/: button · badge · modal shell · loader · rating-stars · scroll-up"]
+    SECTIONS --> UI
+    MODALS --> UI
+  end
+
+  subgraph L3["③ Application — services/"]
+    direction LR
+    STORE["store.service · filter · category · page · keyword"]
+    FAV_SVC["favorites.service"]
+    CACHE["cache.service · in-memory TTL"]
+    STORAGE["storage.service · localStorage wrapper"]
+    FAV_SVC --> STORAGE
+  end
+
+  subgraph L4["④ Data access — api/"]
+    direction LR
+    HTTP["instance.js · Axios + loader + toasts"]
+    ENDPOINTS["filters · exercises · quote · subscription"]
+    ENDPOINTS --> HTTP
+  end
+
+  subgraph L5["⑤ External"]
+    API["GoIT REST API"]
+  end
+
+  subgraph SHARED["Shared cross-cutting"]
+    direction LR
+    UTILS["utils/ · constants · validators · notify"]
+    STYLES["styles/ · SCSS tokens + main.scss"]
+    LS[("localStorage")]
+  end
+
+  L1 --> L2
+  L2 --> L3
+  L3 --> L4
+  L4 --> L5
+  L2 -. read/write .-> STORE
+  L2 -. favorites .-> FAV_SVC
+  L3 -. cache hits .-> CACHE
+  CACHE --> L4
+  STORAGE --> LS
+  L2 --> UTILS
+  L3 --> UTILS
+  L4 --> UTILS
+  HTTP -. loader .-> UI
+  L1 --> STYLES
+  L2 --> STYLES
+```
+
+### Pages & components
+
+Each HTML page declares empty `[data-component]` slots; the matching `pages/*.js` file mounts components on `DOMContentLoaded`. Modals are **not** mounted on load — they open on user action.
+
+```mermaid
+flowchart TB
+  subgraph HOME["Home — index.html → home.js"]
+    direction TB
+    H_HEADER["header"]
+    H_HERO["hero"]
+    H_FILTERS["filters"]
+    H_LIST["category-list → category-card"]
+    H_PAGE["pagination"]
+    H_QUOTE["quote"]
+    H_NORM["daily-norm"]
+    H_FOOTER["footer"]
+    H_SCROLL["scroll-up"]
+  end
+
+  subgraph FAVORITES["Favorites — favorites.html → favorites.js"]
+    direction TB
+    F_HEADER["header"]
+    F_LIST["favorites-list → exercise-card"]
+    F_QUOTE["quote"]
+    F_NORM["daily-norm"]
+    F_FOOTER["footer"]
+    F_SCROLL["scroll-up"]
+  end
+
+  subgraph ON_DEMAND["On user action (both pages)"]
+    direction LR
+    EX_MODAL["exercise-modal · details · favorite toggle"]
+    RATE_MODAL["rating-modal · stars + email → API"]
+    EX_MODAL --> RATE_MODAL
+  end
+
+  H_LIST -. click exercise .-> EX_MODAL
+  F_LIST -. click exercise .-> EX_MODAL
+  EX_MODAL -. rate .-> RATE_MODAL
+```
+
+### Data flow
+
+Typical catalog flow: a component updates the store, subscribers react, a service fetches through the cache layer, Axios handles loader + errors, and the component re-renders with template literals.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant UI as Component
+  participant Store as store.service
+  participant Cache as cache.service
+  participant API as api/*.js
+  participant HTTP as Axios instance
+  participant Loader as ui/loader
+  participant Backend as GoIT API
+  participant DOM as DOM
+
+  User->>UI: select filter / category / page
+  UI->>Store: setState({ activeFilter, category, page })
+  Store-->>UI: subscribe() callback
+  UI->>Cache: withCache(cacheKey, producer)
+  alt cache hit (TTL 5 min)
+    Cache-->>UI: cached data
+  else cache miss
+    Cache->>API: getExercises / getFilters(...)
+    API->>HTTP: http.get(…, { meta: { loader } })
+    HTTP->>Loader: showLoader (global / local / silent)
+    HTTP->>Backend: REST request
+    Backend-->>HTTP: JSON response
+    HTTP->>Loader: hideLoader
+    HTTP-->>API: data
+    API-->>Cache: result
+    Cache-->>UI: fresh data
+  end
+  UI->>DOM: innerHTML = render*(data)
+  UI->>DOM: event delegation on container
+```
 
 ## Working in `src/` (per-folder guide)
 
