@@ -1,5 +1,6 @@
 import { ENDPOINTS, PAGE_LIMIT } from '../utils/constants.js';
 import { http } from './instance.js';
+import { normalizePaginated } from './normalizers.js';
 
 /**
  * Fetches filter categories (Muscles / Body parts / Equipment).
@@ -19,5 +20,5 @@ export async function getFilters(
     meta: { loader },
   });
 
-  return data;
+  return normalizePaginated(data);
 }

@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { hideLoader, showLoader } from '../components/ui/loader/loader.js';
-import { API_BASE_URL, LOADER } from '../utils/constants.js';
-import { notifyError } from '../utils/notify.js';
+import { emitApiEvent } from '../utils/api-events.js';
+import { API_BASE_URL, API_EVENT, LOADER } from '../utils/constants.js';
 
 export const http = axios.create({
   baseURL: API_BASE_URL,
@@ -17,18 +16,18 @@ function loaderMode(config) {
 }
 
 http.interceptors.request.use((config) => {
-  showLoader(loaderMode(config));
+  emitApiEvent(API_EVENT.LOADER_SHOW, loaderMode(config));
   return config;
 });
 
 http.interceptors.response.use(
   (response) => {
-    hideLoader(loaderMode(response.config));
+    emitApiEvent(API_EVENT.LOADER_HIDE, loaderMode(response.config));
     return response;
   },
   (error) => {
-    hideLoader(loaderMode(error.config));
-    notifyError(toUserMessage(error));
+    emitApiEvent(API_EVENT.LOADER_HIDE, loaderMode(error.config));
+    emitApiEvent(API_EVENT.NOTIFY_ERROR, toUserMessage(error));
     return Promise.reject(error);
   },
 );

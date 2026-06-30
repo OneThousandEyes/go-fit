@@ -1,5 +1,6 @@
 import { ENDPOINTS, PAGE_LIMIT } from '../utils/constants.js';
 import { http } from './instance.js';
+import { normalizeEntity, normalizePaginated } from './normalizers.js';
 
 /**
  * Fetches a paginated list of exercises filtered by category + keyword.
@@ -30,7 +31,7 @@ export async function getExercises(
     meta: { loader },
   });
 
-  return data;
+  return normalizePaginated(data);
 }
 
 /**
@@ -44,7 +45,7 @@ export async function getExerciseById(id, { loader } = {}) {
     meta: { loader },
   });
 
-  return data;
+  return normalizeEntity(data);
 }
 
 /**
@@ -59,5 +60,5 @@ export async function rateExercise(id, payload, { loader } = {}) {
     meta: { loader },
   });
 
-  return data;
+  return normalizeEntity(data);
 }

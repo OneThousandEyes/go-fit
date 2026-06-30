@@ -42,3 +42,10 @@ export const LOADER = {
   GLOBAL: 'global',
   SILENT: 'silent',
 };
+
+/** Events emitted by Axios interceptors; wired to UI in api/connect-ui.js. */
+export const API_EVENT = {
+  LOADER_SHOW: 'loader:show',
+  LOADER_HIDE: 'loader:hide',
+  NOTIFY_ERROR: 'notify:error',
+};

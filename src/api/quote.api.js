@@ -1,5 +1,6 @@
 import { ENDPOINTS } from '../utils/constants.js';
 import { http } from './instance.js';
+import { normalizeQuote } from './normalizers.js';
 
 /**
  * Fetches the quote of the day.
@@ -8,5 +9,5 @@ import { http } from './instance.js';
  */
 export async function getQuote({ loader } = {}) {
   const { data } = await http.get(ENDPOINTS.quote, { meta: { loader } });
-  return data;
+  return normalizeQuote(data);
 }
