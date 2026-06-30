@@ -80,6 +80,7 @@ npm run dev        # Vite dev server → http://localhost:5173
 ```
 your-energy/
 ├── public/                  # static assets served as-is (favicon, robots.txt)
+├── .github/                 # CI workflow + CODEOWNERS
 ├── index.html               # Home entry
 ├── favorites.html           # Favorites entry
 └── src/
@@ -334,7 +335,7 @@ Email contract (rating + subscription): `^\w+(\.\w+)?@[a-zA-Z_]+?\.[a-zA-Z]{2,3}
 Quality is enforced at two layers:
 
 - **On commit** — Husky runs `lint-staged`, which auto-fixes staged files (`eslint --fix` + `prettier --write` for JS, `prettier --write` for SCSS/JSON/MD). Badly formatted code is corrected before it lands.
-- **On push / pull request** — the [GitHub Actions workflow](.github/workflows/code-quality.yml) runs the same gate on the whole project: `lint`, `format:check`, and `build`. A red check blocks the merge.
+- **On push / pull request** — the [GitHub Actions workflow](.github/workflows/code-quality.yml) runs on `develop` and `main`: `lint`, `format:check`, and `build`. A red check blocks the merge when branch protection requires status checks.
 
 Run the full gate locally before opening a PR:
 
@@ -346,11 +347,47 @@ npm run build
 
 ## Deployment
 
-Deployed to **GitHub Pages** from the `main` branch. The Vite `base` in [`vite.config.js`](vite.config.js) must match the repository name (`/your-energy/`); override it with the `VITE_BASE` env var if the repo is named differently.
+Deployed to **GitHub Pages** from the `main` branch. Day-to-day development happens on `develop`; merge `develop` → `main` via pull request when a release is ready.
+
+The Vite `base` in [`vite.config.js`](vite.config.js) must match the repository name (`/your-energy/`); override it with the `VITE_BASE` env var if the repo is named differently.
 
 ## Contributing
 
-- **Branches:** `main` is stable and deployable. Work on `feat/<task>` or `fix/<task>` branches and merge via reviewed pull requests.
-- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) — `type(scope): subject` (e.g. `feat(filters): add active state toggle`).
-- **Boundaries:** keep the layer rules in [Architecture](#architecture) — `api/` has no DOM, `services/` don't call the backend directly, `components/` only render and react to the store. No barrel imports.
-- **Before a PR:** run the full quality gate (`npm run lint`, `npm run format:check`, `npm run build`).
+### Branch workflow
+
+| Branch                       | Role                                                        |
+| ---------------------------- | ----------------------------------------------------------- |
+| `develop`                    | Default integration branch — feature work merges here first |
+| `main`                       | Production / deployable — GitHub Pages deploys from here    |
+| `feat/<task>` / `fix/<task>` | Short-lived topic branches off `develop`                    |
+
+**Day-to-day flow:**
+
+1. Update `develop` and branch off it:
+
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feat/my-task
+   ```
+
+2. Commit with [Conventional Commits](https://www.conventionalcommits.org/) — `type(scope): subject` (e.g. `feat(filters): add active state toggle`).
+3. Push and open a **pull request into `develop`** (not `main`).
+4. Wait for CI (`Lint, format & build`) and a code-owner review ([`.github/CODEOWNERS`](.github/CODEOWNERS)).
+5. When a release is ready, open a **pull request from `develop` into `main`**.
+
+**Protected branches:** `main` and `develop` do not accept direct pushes — all changes go through reviewed pull requests.
+
+### Code boundaries
+
+Keep the layer rules in [Architecture](#architecture) — `api/` has no DOM, `services/` don't call the backend directly, `components/` only render and react to the store. No barrel imports.
+
+### Before a PR
+
+Run the full quality gate locally:
+
+```bash
+npm run lint
+npm run format:check
+npm run build
+```
