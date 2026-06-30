@@ -1,1 +1,26 @@
 @use '../../../styles/abstracts' as *;
+
+.scroll-up {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 800;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  color: $color-white;
+  background-color: $color-text;
+  border-radius: 50%;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
