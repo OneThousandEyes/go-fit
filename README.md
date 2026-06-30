@@ -1,6 +1,6 @@
 # Your Energy
 
-> Adaptive fitness-exercise catalog with filtering, favorites, detail modals, ratings, and a newsletter subscription. Team project for the **MSc in Software Engineering & AI at Neoversity (GoIT)**, built on a **vanilla stack — no frameworks**.
+> Adaptive fitness-exercise catalog with filtering, favorites, detail modals, ratings, and a newsletter subscription. Team project for the **MSc in Software Engineering & AI**, built on a **vanilla stack — no frameworks**.
 
 <p>
   <img alt="Vanilla JS" src="https://img.shields.io/badge/JavaScript-ES6%2B-f7df1e?logo=javascript&logoColor=000" />
