@@ -94,7 +94,7 @@ your-energy/
     ├── api/                 # Axios instance, normalizers, endpoint modules (no DOM)
     ├── components/          # components: *.astro (markup) + *.js/*.scss co-located
     │   └── ui/              # reusable primitives (button, loader, badge, …)
-    ├── services/            # store, favorites, cache, storage (state orchestration)
+    ├── services/            # store, favorites, storage (state orchestration)
     ├── utils/               # constants, validators, notify, api-events
     ├── styles/              # abstracts / base / layout + main.scss (global system)
     └── env.d.ts             # Astro type references
@@ -105,7 +105,7 @@ your-energy/
 Organized **by feature, not by type**, with strict layer boundaries:
 
 - **`api/`** never touches the DOM. All HTTP goes through the shared `http` instance ([`api/instance.js`](src/api/instance.js)); loader and toast side effects are emitted as events and wired once via [`api/connect-ui.js`](src/api/connect-ui.js) in the layout script.
-- **`services/`** never call the backend directly — they orchestrate `api/` together with the store, cache, and storage.
+- **`services/`** never call the backend directly — they orchestrate `api/` together with the store and storage.
 - **`components/`** only render and listen for events. They read shared state from [`services/store.service.js`](src/services/store.service.js) and persist favorites via [`services/favorites.service.js`](src/services/favorites.service.js).
 - **No raw `localStorage` / `JSON.parse`** outside [`services/storage.service.js`](src/services/storage.service.js).
 - **No barrel imports** — import directly from the source file.
@@ -138,7 +138,6 @@ flowchart TB
     direction LR
     STORE["store.service · filter · category · page · keyword"]
     FAV_SVC["favorites.service"]
-    CACHE["cache.service · in-memory TTL"]
     STORAGE["storage.service · localStorage wrapper"]
     FAV_SVC --> STORAGE
   end
@@ -168,8 +167,7 @@ flowchart TB
   L4 --> L5
   L2 -. read/write .-> STORE
   L2 -. favorites .-> FAV_SVC
-  L3 -. cache hits .-> CACHE
-  CACHE --> L4
+  L3 --> L4
   STORAGE --> LS
   L2 --> UTILS
   L3 --> UTILS
@@ -224,7 +222,7 @@ flowchart TB
 
 ### Data flow
 
-Typical catalog flow: a component updates the store, subscribers react, a service fetches through the cache layer, Axios handles loader + errors, and the component re-renders with template literals.
+Typical catalog flow: a component updates the store, subscribers react, fetches via `api/`, Axios handles loader + errors, and the component re-renders with template literals.
 
 ```mermaid
 sequenceDiagram
@@ -232,7 +230,6 @@ sequenceDiagram
   actor User
   participant UI as Component
   participant Store as store.service
-  participant Cache as cache.service
   participant API as api/*.js
   participant HTTP as Axios instance
   participant Loader as ui/loader
@@ -242,20 +239,15 @@ sequenceDiagram
   User->>UI: select filter / category / page
   UI->>Store: setState({ activeFilter, category, page })
   Store-->>UI: subscribe() callback
-  UI->>Cache: withCache(cacheKey, producer)
-  alt cache hit (TTL 5 min) or in-flight promise
-    Cache-->>UI: cached / shared promise
-  else cache miss
-    Cache->>API: getExercises / getFilters(...)
-    API->>HTTP: http.get(…, { meta: { loader } })
-    HTTP->>Loader: emit loader:show (global / local / silent)
-    HTTP->>Backend: REST request
-    Backend-->>HTTP: JSON response
-    HTTP->>Loader: emit loader:hide
-    HTTP-->>API: data
-    API-->>Cache: normalize + cache result
-    Cache-->>UI: fresh data
-  end
+  UI->>API: getExercises / getFilters(...)
+  API->>HTTP: http.get(…, { meta: { loader } })
+  HTTP->>Loader: emit loader:show (global / local / silent)
+  HTTP->>Backend: REST request
+  Backend-->>HTTP: JSON response
+  HTTP->>Loader: emit loader:hide
+  HTTP-->>API: data
+  API->>API: normalize response
+  API-->>UI: fresh data
   UI->>DOM: innerHTML = render*(data)
   UI->>DOM: event delegation on container
 ```
@@ -297,22 +289,15 @@ if (!isValidEmail(email)) notifyError('Invalid email');
 
 ### `src/services/` — state & orchestration
 
-The stateful layer: the observable **store**, **favorites** (localStorage), **cache** (TTL + in-flight deduplication), and the **storage** wrapper. Services orchestrate `api/` + persistence + state. **No DOM, no markup.** This is the only place allowed to touch `localStorage` (via [`storage.service.js`](src/services/storage.service.js)).
+The stateful layer: the observable **store**, **favorites** (localStorage), and the **storage** wrapper. Services orchestrate `api/` + persistence + state. **No DOM, no markup.** This is the only place allowed to touch `localStorage` (via [`storage.service.js`](src/services/storage.service.js)).
 
 ```js
-// a feature flow: cache the request, then publish to the store
-import { getExercises } from '../api/exercises.api.js';
-import { withCache } from '../services/cache.service.js';
-import { setState, getState } from '../services/store.service.js';
+// favorites.service.js — persist user data via the storage wrapper
+import { readJSON, writeJSON } from './storage.service.js';
+import { STORAGE_KEYS } from '../utils/constants.js';
 
-export async function loadExercises() {
-  const { category, page, keyword } = getState();
-  const key = `exercises:${category?.name}:${page}:${keyword}`;
-  // map the filter type (Muscles/Body parts/Equipment) to its query param
-  const data = await withCache(key, () =>
-    getExercises({ ...toExerciseParams(category), keyword, page }),
-  );
-  return data;
+export function getFavorites() {
+  return readJSON(STORAGE_KEYS.FAVORITES, []);
 }
 ```
 
@@ -324,7 +309,7 @@ Feature components are `.astro` files (static markup + optional co-located `<scr
 
 **Where component logic lives:**
 
-- **Cross-cutting logic** (HTTP, store, cache, storage, validators, events) → `api/`, `services/`, `utils/`. Framework-agnostic ESM, imported by any island.
+- **Cross-cutting logic** (HTTP, store, storage, validators, events) → `api/`, `services/`, `utils/`. Framework-agnostic ESM, imported by any island.
 - **Component logic** → a co-located `<name>.client.js` module next to the `.astro`, exporting `init<Name>(root)` and wired by a thin `<script>`. This keeps one folder per component and one obvious home for browser logic.
 
 Every section follows the **uniform island contract** — `Component.astro` (static host with a `data-component` hook) + `<name>.client.js` (`init<Name>(root)` seam) + `<script>` that wires them:
