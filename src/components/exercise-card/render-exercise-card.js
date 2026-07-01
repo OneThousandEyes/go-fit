@@ -1,10 +1,26 @@
 import { escapeHtml } from '../../utils/escape-html.js';
+import { renderSpriteIcon, SPRITE_ICON } from '../../utils/sprite-icon.js';
 import { renderBadge } from '../ui/badge/badge.js';
 
-// TODO: add to SVG sprite
-const RUNNER_ICON = `<svg class="exercise-card__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="5" r="1.6"/><path d="M6 19l3.2-3.6 2.6 1.9L13 12"/><path d="M8.6 10.6 12.4 8l3 2.8 2.6-.2"/></svg>`;
-const STAR_ICON = `<svg class="exercise-card__star" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 9.3l6.5-.9L12 2.5Z"/></svg>`;
-const ARROW_ICON = `<svg class="exercise-card__arrow" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>`;
+const RUNNER_ICON = renderSpriteIcon(SPRITE_ICON.RUNNING, {
+  className: 'exercise-card__icon-glyph',
+  width: 14,
+  height: 14,
+});
+
+const STAR_ICON = renderSpriteIcon(SPRITE_ICON.STAR, {
+  className: 'exercise-card__star',
+  width: 18,
+  height: 18,
+});
+
+const ARROW_ICON = renderSpriteIcon(SPRITE_ICON.ARROW_UP_RIGHT, {
+  className: 'exercise-card__arrow',
+  width: 16,
+  height: 16,
+  viewBox: '0 0 16 16',
+  stroke: true,
+});
 
 /**
  * @param {unknown} rating
