@@ -38,8 +38,6 @@ export const FILTER_PARAM = {
 
 export const EMAIL_PATTERN = /^\w+(\.\w+)?@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
-export const CACHE_TTL_MS = 5 * 60 * 1000;
-
 export const LOADER = {
   GLOBAL: 'global',
   SILENT: 'silent',
