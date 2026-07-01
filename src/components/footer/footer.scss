@@ -117,7 +117,7 @@
       'policy year';
     row-gap: rem(10);
 
-    margin-top: rem(80);
+    margin-top: auto;
 
     font-size: rem(14);
     line-height: 1.29;
@@ -204,8 +204,12 @@
     &__bottom {
       display: grid;
       grid-template-columns: max-content max-content max-content;
+      grid-template-areas: 'copyright policy year';
       align-items: center;
       justify-content: space-between;
+      row-gap: 0;
+
+      margin-top: rem(64);
 
       font-size: rem(14);
       line-height: 1.29;
@@ -222,7 +226,7 @@
     }
 
     &__year {
-      margin: 0 rem(48) 0 0;
+      margin: 0;
       justify-self: end;
       white-space: nowrap;
     }
