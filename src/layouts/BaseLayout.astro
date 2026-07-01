@@ -1,6 +1,7 @@
 ---
 import 'modern-normalize';
 import '../styles/main.scss';
+import spriteSvg from '../../public/sprite.svg?raw';
 import Footer from '../components/footer/Footer.astro';
 import Header from '../components/header/Header.astro';
 import ScrollUp from '../components/ui/scroll-up/ScrollUp.astro';
@@ -71,6 +72,8 @@ const websiteSchema = {
     />
   </head>
   <body>
+    <div set:html={spriteSvg} hidden aria-hidden="true" />
+
     <Header />
 
     <slot />

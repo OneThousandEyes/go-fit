@@ -77,22 +77,23 @@ $pagination-icon-disabled: rgba(36, 36, 36, 0.5);
 
     min-width: 32px;
     height: 32px;
-    padding: 0 4px;
+    padding: 0 6px;
     border: 0;
     border-radius: 18px;
     background: transparent;
     font-family: inherit;
     font-size: 24px;
-    line-height: 32px;
+    line-height: 1;
     font-weight: 400;
     letter-spacing: 0.04em;
     color: $color-page-inactive;
+    white-space: nowrap;
     cursor: pointer;
     transition: color $transition;
 
     &--active {
-      width: 32px;
-      padding: 0;
+      min-width: 32px;
+      padding: 0 6px;
       border: 1px solid $color-heading;
       color: $color-heading;
       cursor: default;
