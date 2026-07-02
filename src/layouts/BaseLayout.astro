@@ -72,7 +72,7 @@ const websiteSchema = {
   <body>
     <div set:html={spriteSvg} hidden aria-hidden="true" />
 
-    <Header />
+    <Header currentPath={Astro.url.pathname} />
 
     <slot />
 
