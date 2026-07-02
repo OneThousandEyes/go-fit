@@ -100,6 +100,17 @@
     color: $color-on-media;
     background-color: transparent;
     border: 1px solid $color-on-media;
+
+    transition:
+      border-color 250ms ease,
+      box-shadow 250ms ease;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      border-color: $color-on-media;
+      box-shadow: 0 0 0 1px $color-on-media;
+    }
   }
 
   &__input::placeholder {
@@ -109,8 +120,21 @@
   &__button {
     color: $color-text;
     background-color: $color-on-media;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
+
+    transition:
+      color 250ms ease,
+      background-color 250ms ease,
+      border-color 250ms ease;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      color: $color-on-media;
+      background-color: transparent;
+      border-color: $color-on-media;
+      outline: none;
+    }
 
     &--loading {
       position: relative;
@@ -169,7 +193,7 @@
     justify-self: end;
     margin: 0;
     white-space: nowrap;
-    transform: translateX(rem(45));
+    transform: none;
   }
 
   @include respond($bp-tablet) {
@@ -255,6 +279,7 @@
       margin: 0;
       justify-self: end;
       white-space: nowrap;
+      transform: none;
     }
   }
 
@@ -303,9 +328,9 @@
     }
 
     &__year {
-      margin: 0 rem(35) 0 0;
-      justify-self: end;
-      white-space: nowrap;
+      margin: 0;
+      justify-self: start;
+      transform: translateX(rem(52));
     }
   }
 }
