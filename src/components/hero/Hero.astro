@@ -1,6 +1,79 @@
+---
+import { withBase, withBaseSrcSet } from '../../utils/withBase';
+
+const heroMainMobSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-mob@1x.webp 1x, images/women-sportswear-working-out-outdoors-mob@2x.webp 2x',
+);
+const heroMainTabSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-tab@1x.webp 1x, images/women-sportswear-working-out-outdoors-tab@2x.webp 2x',
+);
+const heroMainDeskSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-desk@1x.webp 1x, images/women-sportswear-working-out-outdoors-desk@2x.webp 2x',
+);
+const heroMainImgSrc = withBase(
+  'images/women-sportswear-working-out-outdoors-desk@1x.webp',
+);
+const heroMiniImgSrc = withBase(
+  'images/young-women-doing-fitness-outdoors-together-desk@1x.webp',
+);
+const heroMiniImgSrcset = withBaseSrcSet(
+  'images/young-women-doing-fitness-outdoors-together-desk@1x.webp 1x, images/young-women-doing-fitness-outdoors-together-desk@2x.webp 2x',
+);
+---
+
 <section class="hero">
   <div class="container" data-component="hero">
-    <div class="placeholder">Hero</div>
+    <div class="hero-header">
+      <div class="hero-left">
+        <h1 class="hero-title">
+          <span class="hero-icon">
+            <svg>
+              <use href="#icon-sun"></use>
+            </svg>
+          </span>
+          Get <span class="hero-title-italic">Body</span> in shape, Stay healthy
+        </h1>
+        <p class="hero-description">
+          Transform your physique and embrace a healthier lifestyle with our
+          comprehensive fitness and nutrition support.
+        </p>
+      </div>
+    </div>
+
+    <div class="hero-main-img-container">
+      <picture>
+        <source media="(max-width: 767px)" srcset={heroMainMobSrcset} />
+        <source
+          media="(min-width: 768px) and (max-width: 1157px)"
+          srcset={heroMainTabSrcset}
+        />
+        <source media="(min-width: 1376px)" srcset={heroMainDeskSrcset} />
+        <img
+          class="hero-main-img"
+          src={heroMainImgSrc}
+          alt="Women sport"
+          width="1376"
+          height="350"
+        />
+      </picture>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-mini-img-container">
+        <img
+          class="hero-mini-img"
+          src={heroMiniImgSrc}
+          alt="Young women"
+          srcset={heroMiniImgSrcset}
+        />
+      </div>
+      <div class="hero-tags-container">
+        <span class="hero-tag">#Sport</span>
+        <span class="hero-tag">#Healthy</span>
+        <span class="hero-tag">#Workout</span>
+        <span class="hero-tag">#Diet</span>
+      </div>
+    </div>
   </div>
 </section>
 
