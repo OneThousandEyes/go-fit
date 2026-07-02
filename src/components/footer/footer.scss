@@ -5,6 +5,10 @@
   color: $color-on-media;
 
   &__container {
+    display: flex;
+    flex-direction: column;
+
+    min-height: rem(590);
     padding-top: rem(40);
     padding-bottom: rem(10);
   }
@@ -138,6 +142,7 @@
     row-gap: rem(10);
 
     margin-top: auto;
+    padding-right: rem(52);
 
     font-size: rem(14);
     line-height: 1.29;
@@ -164,6 +169,7 @@
     justify-self: end;
     margin: 0;
     white-space: nowrap;
+    transform: translateX(rem(45));
   }
 
   @include respond($bp-tablet) {
