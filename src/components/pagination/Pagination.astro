@@ -1,7 +1,7 @@
 ---
-import { getFilters } from '../../api/filters.api.js';
-import { DEFAULT_FILTER } from '../../utils/constants.js';
-import { renderPaginationMarkup } from './pagination-view.js';
+import { getFilters } from '@/api/filters.api.ts';
+import { DEFAULT_FILTER } from '@/constants/filters.ts';
+import { renderPaginationMarkup } from './pagination-view.ts';
 
 const INITIAL_PAGE = 1;
 
@@ -35,7 +35,7 @@ const html = isHidden
 />
 
 <script>
-  import { initPagination } from './pagination.client.js';
+  import { initPagination } from './pagination.client.ts';
 
   initPagination(document.querySelector('[data-component="pagination"]'));
 </script>

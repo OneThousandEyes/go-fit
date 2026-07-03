@@ -1,7 +1,8 @@
 ---
-import { getFilters } from '../../api/filters.api.js';
-import { DEFAULT_FILTER, PAGE_LIMIT } from '../../utils/constants.js';
-import { renderCategoryCard } from '../category-card/render-category-card.js';
+import { getFilters } from '@/api/filters.api.ts';
+import { DEFAULT_FILTER } from '@/constants/filters.ts';
+import { PAGE_LIMIT } from '@/constants/patterns.ts';
+import { renderCategoryCard } from '@/components/category-card/render-category-card.ts';
 
 interface CategoryItem {
   name?: unknown;
@@ -50,7 +51,7 @@ const html = categories
 />
 
 <script>
-  import { initCategoryList } from './category-list.client.js';
+  import { initCategoryList } from './category-list.client.ts';
 
   initCategoryList(document.querySelector('[data-component="category-list"]'));
 </script>

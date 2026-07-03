@@ -6,8 +6,6 @@
 
 @use 'layout/container';
 
-// Page-section layout lives in the scoped <style> of each .astro page.
-// Component styles are co-located per component and aggregated here.
 @use '../components/ui/button/button';
 @use '../components/ui/rating-stars/rating-stars';
 @use '../components/ui/badge/badge';
