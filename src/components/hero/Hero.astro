@@ -54,6 +54,8 @@ const heroMiniImgSrcset = withBaseSrcSet(
           alt="Women sport"
           width="1376"
           height="350"
+          fetchpriority="high"
+          decoding="async"
         />
       </picture>
     </div>
@@ -76,9 +78,3 @@ const heroMiniImgSrcset = withBaseSrcSet(
     </div>
   </div>
 </section>
-
-<script>
-  import { initHero } from './hero.client.js';
-
-  initHero(document.querySelector('[data-component="hero"]'));
-</script>

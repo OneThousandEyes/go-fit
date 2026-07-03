@@ -16,18 +16,7 @@ export function initHeader(root) {
    * @param {boolean} isLocked
    */
   const setScrollLock = (isLocked) => {
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-
-    if (isLocked) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight =
-        scrollbarWidth > 0 ? `${scrollbarWidth}px` : '';
-      return;
-    }
-
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
+    document.body.style.overflow = isLocked ? 'hidden' : '';
   };
 
   const open = () => {
