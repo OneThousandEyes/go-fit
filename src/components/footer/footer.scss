@@ -51,6 +51,20 @@
     color: currentColor;
     border: 1px solid rgba(244, 244, 244, 0.1);
     border-radius: rem(10);
+    cursor: pointer;
+
+    transition:
+      color 250ms ease,
+      background-color 250ms ease,
+      border-color 250ms ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $color-text;
+      background-color: $color-on-media;
+      border-color: $color-on-media;
+      outline: none;
+    }
   }
 
   &__social-icon {
