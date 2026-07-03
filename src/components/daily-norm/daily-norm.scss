@@ -1,1 +1,156 @@
 @use '../../styles/abstracts' as *;
+
+.daily-norm {
+  position: relative;
+  width: 100%;
+  min-height: 201px;
+  padding: 20px 20px 20px 70px;
+  border-radius: 20px;
+  background-color: $color-white;
+  cursor: initial;
+
+  @include respond($bp-tablet) {
+    width: 400px;
+    min-height: 249px;
+    padding: 40px 40px 40px 90px;
+  }
+
+  @include respond($bp-desktop) {
+    width: 444px;
+    min-height: 315px;
+  }
+
+  &__top {
+    display: contents;
+  }
+
+  &__icon {
+    @include flex-center;
+
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: $color-white;
+    background-color: $color-heading;
+
+    @include respond($bp-tablet) {
+      top: 59px;
+    }
+  }
+
+  &__icon-svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  &__heading {
+    display: contents;
+  }
+
+  &__title {
+    margin: 0 0 2px;
+    color: $color-heading;
+    font-size: 20px;
+    font-weight: $font-weight-medium;
+    line-height: 1;
+
+    @include respond($bp-tablet) {
+      font-size: 24px;
+      line-height: 1.3;
+    }
+  }
+
+  &__subtitle {
+    margin: 0 0 16px;
+    color: $color-heading-muted;
+    font-size: 14px;
+    font-weight: $font-weight-regular;
+    line-height: 1.3;
+  }
+
+  &__text {
+    @include line-clamp(5);
+
+    margin: 0;
+    color: $color-heading;
+    font-size: 14px;
+    font-weight: $font-weight-regular;
+    line-height: 1.3;
+
+    @include respond($bp-desktop) {
+      @include line-clamp(9);
+    }
+  }
+
+  &--compact {
+    width: 100%;
+    min-height: 141px;
+    padding: 25px;
+    box-sizing: border-box;
+
+    @include respond($bp-tablet) {
+      width: 100%;
+      min-height: 141px;
+      padding: 25px;
+    }
+
+    @include respond($bp-desktop) {
+      width: 100%;
+      min-height: 141px;
+      padding: 25px;
+    }
+
+    .daily-norm__top {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .daily-norm__icon {
+      position: static;
+      transform: none;
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 0;
+      background-color: transparent;
+      color: $color-heading;
+    }
+
+    .daily-norm__icon-svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .daily-norm__heading {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .daily-norm__title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: $font-weight-medium;
+    }
+
+    .daily-norm__subtitle {
+      margin: 0;
+      font-size: 14px;
+      line-height: 18px;
+      color: $color-heading-muted;
+    }
+
+    .daily-norm__text {
+      display: none;
+    }
+  }
+}

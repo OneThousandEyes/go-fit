@@ -5,22 +5,26 @@ import spriteSvg from '../../public/sprite.svg?raw';
 import Footer from '../components/footer/Footer.astro';
 import Header from '../components/header/Header.astro';
 import ScrollUp from '../components/ui/scroll-up/ScrollUp.astro';
+import { withBase } from '../utils/withBase';
 
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  robots?: string;
 }
 
 const SITE_NAME = 'Your Energy';
-const { title, description, ogImage = 'og-image.svg' } = Astro.props;
-
-const baseRoot = import.meta.env.BASE_URL.replace(/\/$/, '');
-const withBase = (path: string) => `${baseRoot}/${path.replace(/^\//, '')}`;
+const {
+  title,
+  description,
+  ogImage = 'og-image.svg',
+  robots = 'index, follow',
+} = Astro.props;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 const ogImageUrl = new URL(withBase(ogImage), Astro.site).href;
-const faviconHref = withBase('favicon.svg');
+const faviconHref = `${withBase('favicon.svg')}?v=2`;
 const sitemapHref = withBase('sitemap-index.xml');
 
 const websiteSchema = {
@@ -38,20 +42,21 @@ const websiteSchema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <meta
+      name="google-site-verification"
+      content="VVOXv-31GGgJooMVM5zb5HWWYSfjbHx6s0HI1-bzj1I"
+    />
+
     <title>{title}</title>
 
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
 
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href={faviconHref} type="image/svg+xml" />
     <link rel="sitemap" type="application/xml" href={sitemapHref} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap"
-      rel="stylesheet"
-    />
+    <slot name="head" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
@@ -74,7 +79,7 @@ const websiteSchema = {
   <body>
     <div set:html={spriteSvg} hidden aria-hidden="true" />
 
-    <Header />
+    <Header currentPath={Astro.url.pathname} />
 
     <slot />
 

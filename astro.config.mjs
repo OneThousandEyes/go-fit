@@ -9,6 +9,9 @@ export default defineConfig({
   base: BASE_PATH,
   output: 'static',
   trailingSlash: 'ignore',
+  build: {
+    inlineStylesheets: 'always',
+  },
   integrations: [sitemap()],
   vite: {
     css: {

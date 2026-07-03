@@ -8,9 +8,9 @@ $color-white: #ffffff;
 
 // Semantic — headings, tabs, cards, pagination
 $color-heading: #242424;
-$color-heading-muted: rgba(36, 36, 36, 0.6);
+$color-heading-muted: rgba(36, 36, 36, 0.72);
 $color-on-media: #f4f4f4;
-$color-on-media-muted: rgba(244, 244, 244, 0.4);
+$color-on-media-muted: rgba(244, 244, 244, 0.75);
 $color-overlay: rgba(17, 17, 17, 0.5);
 $color-page-inactive: #d5d5d5;
 $color-star: #eea10c;
@@ -41,3 +41,12 @@ $bp-desktop: 1440px;
 $radius-sm: 12px;
 $radius-md: 24px;
 $transition: 250ms ease;
+
+// Scroll up
+$scroll-up-size-mobile: 44;
+$scroll-up-size-tablet-up: 54;
+$scroll-up-bg: $color-accent;
+$scroll-up-icon: $color-white;
+$scroll-up-offset: 12;
+$scroll-up-duration: 320ms;
+$scroll-up-ease: cubic-bezier(0.22, 1, 0.36, 1);
