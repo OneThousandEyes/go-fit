@@ -10,13 +10,61 @@ import PhotoCard from '../components/photo-card/PhotoCard.astro';
 import Quote from '../components/quote/Quote.astro';
 import Search from '../components/search/Search.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase, withBaseSrcSet } from '../utils/withBase';
 
 const title = 'Your Energy';
 const description =
   'Your Energy — catalog of fitness exercises with filters, favorites and daily motivation.';
+
+const heroMainMobSrc = withBase(
+  'images/women-sportswear-working-out-outdoors-mob@1x.webp',
+);
+const heroMainMobSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-mob@1x.webp 1x, images/women-sportswear-working-out-outdoors-mob@2x.webp 2x',
+);
+const heroMainTabSrc = withBase(
+  'images/women-sportswear-working-out-outdoors-tab@1x.webp',
+);
+const heroMainTabSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-tab@1x.webp 1x, images/women-sportswear-working-out-outdoors-tab@2x.webp 2x',
+);
+const heroMainDeskSrc = withBase(
+  'images/women-sportswear-working-out-outdoors-desk@1x.webp',
+);
+const heroMainDeskSrcset = withBaseSrcSet(
+  'images/women-sportswear-working-out-outdoors-desk@1x.webp 1x, images/women-sportswear-working-out-outdoors-desk@2x.webp 2x',
+);
 ---
 
 <BaseLayout title={title} description={description}>
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    href={heroMainMobSrc}
+    imagesrcset={heroMainMobSrcset}
+    media="(max-width: 767px)"
+    fetchpriority="high"
+  />
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    href={heroMainTabSrc}
+    imagesrcset={heroMainTabSrcset}
+    media="(min-width: 768px) and (max-width: 1157px)"
+    fetchpriority="high"
+  />
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    href={heroMainDeskSrc}
+    imagesrcset={heroMainDeskSrcset}
+    media="(min-width: 1376px)"
+    fetchpriority="high"
+  />
+
   <main>
     <h1 class="visually-hidden">Your Energy — fitness exercises catalog</h1>
 
