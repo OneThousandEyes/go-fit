@@ -62,7 +62,7 @@ async function loadCategories(root) {
 
   if (hasCards) {
     status.showRefreshing(root);
-  } else {
+  } else if (!root.querySelector('.category-card')) {
     status.renderLoading(root, 'Loading categories…');
   }
 
