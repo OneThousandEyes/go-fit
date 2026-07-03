@@ -1,6 +1,6 @@
 ---
-import { DEFAULT_FILTER } from '../../utils/constants.js';
-import { renderFiltersMarkup } from './render-filters.js';
+import { DEFAULT_FILTER } from '@/constants/filters.ts';
+import { renderFiltersMarkup } from './render-filters.ts';
 ---
 
 <div
@@ -11,7 +11,7 @@ import { renderFiltersMarkup } from './render-filters.js';
 />
 
 <script>
-  import { initFilters } from './filters.client.js';
+  import { initFilters } from './filters.client.ts';
 
   initFilters(document.querySelector('[data-component="filters"]'));
 </script>
