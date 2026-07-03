@@ -36,7 +36,7 @@
   max-width: 335px;
 
   @include respond($bp-tablet) {
-    max-width: 639px;
+    max-width: 700px;
   }
 }
 
@@ -157,6 +157,7 @@
 
 .hero-tags-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   width: 100%;
 
@@ -165,7 +166,6 @@
   }
 
   @include respond($bp-desktop) {
-    flex-wrap: wrap;
     width: 200px;
   }
 }
