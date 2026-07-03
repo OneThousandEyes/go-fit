@@ -1,6 +1,6 @@
+import { STORAGE_KEYS } from '@/constants/storage-keys.ts';
+import { readJSON, writeJSON } from '@/services/storage.service.ts';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { STORAGE_KEYS } from '../../src/utils/constants.js';
-import { readJSON, writeJSON } from '../../src/services/storage.service.js';
 
 describe('url-state sync', () => {
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('url-state sync', () => {
       category: { name: 'bench', filter: 'equipment' },
       keyword: 'press',
     });
-    expect(JSON.parse(/** @type {string} */ (raw))).toEqual(state);
+    expect(JSON.parse(raw!)).toEqual(state);
   });
 
   it('syncs existing localStorage UI state into URL when it is read', () => {

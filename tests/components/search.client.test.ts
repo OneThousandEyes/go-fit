@@ -1,18 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const SEARCH_PATH = '../../src/components/search/search.client.js';
-const STORE_PATH = '../../src/services/store.service.js';
+const SEARCH_PATH = '@/components/search/search.client.ts';
+const STORE_PATH = '@/services/store.service.ts';
 
-/** @type {HTMLFormElement} */
-let root;
-/** @type {HTMLInputElement} */
-let input;
-/** @type {() => void} */
-let teardown = () => {};
-/** @type {typeof import('../../src/services/store.service.js')} */
-let store;
+type StoreModule = typeof import('@/services/store.service.ts');
 
-async function setup() {
+let root: HTMLFormElement;
+let input: HTMLInputElement;
+let teardown: () => void = () => {};
+let store: StoreModule;
+
+async function setup(): Promise<void> {
   localStorage.clear();
   vi.resetModules();
 
@@ -88,9 +86,7 @@ describe('search island', () => {
   it('shows the clear button only when the input has text', () => {
     store.setState({ category: { name: 'waist', filter: 'bodypart' } });
 
-    const clearButton = /** @type {HTMLButtonElement | null} */ (
-      root.querySelector('.search__clear')
-    );
+    const clearButton = root.querySelector<HTMLButtonElement>('.search__clear');
 
     expect(clearButton?.hidden).toBe(true);
 
@@ -107,9 +103,8 @@ describe('search island', () => {
       page: 3,
     });
 
-    const clearButton = /** @type {HTMLButtonElement} */ (
-      root.querySelector('.search__clear')
-    );
+    const clearButton =
+      root.querySelector<HTMLButtonElement>('.search__clear')!;
 
     clearButton.click();
 

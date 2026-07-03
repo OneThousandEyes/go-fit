@@ -1,22 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/api/quote.api.js', () => ({
+vi.mock('@/api/quote.api.ts', () => ({
   getQuote: vi.fn(),
 }));
 
-vi.mock('../../src/services/storage.service.js', () => ({
+vi.mock('@/services/storage.service.ts', () => ({
   readJSON: vi.fn(),
   writeJSON: vi.fn(),
 }));
 
-import { getQuote } from '../../src/api/quote.api.js';
-import { initQuote } from '../../src/components/quote/quote.client.js';
-import { readJSON, writeJSON } from '../../src/services/storage.service.js';
-import { STORAGE_KEYS } from '../../src/utils/constants.js';
+import { getQuote } from '@/api/quote.api.ts';
+import { initQuote } from '@/components/quote/quote.client.ts';
+import { STORAGE_KEYS } from '@/constants/storage-keys.ts';
+import { readJSON, writeJSON } from '@/services/storage.service.ts';
 
 describe('initQuote', () => {
-  /** @type {HTMLElement} */
-  let root;
+  let root: HTMLElement;
 
   beforeEach(() => {
     root = document.createElement('div');

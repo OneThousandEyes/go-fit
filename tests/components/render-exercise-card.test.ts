@@ -1,5 +1,5 @@
+import { renderExerciseCard } from '@/components/exercise-card/render-exercise-card.ts';
 import { describe, expect, it } from 'vitest';
-import { renderExerciseCard } from '../../src/components/exercise-card/render-exercise-card.js';
 
 describe('renderExerciseCard', () => {
   it('renders name, meta, rating and the start button id', () => {

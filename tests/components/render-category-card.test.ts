@@ -1,5 +1,5 @@
+import { renderCategoryCard } from '@/components/category-card/render-category-card.ts';
 import { describe, expect, it } from 'vitest';
-import { renderCategoryCard } from '../../src/components/category-card/render-category-card.js';
 
 describe('renderCategoryCard', () => {
   it('renders name, caption and data attributes', () => {

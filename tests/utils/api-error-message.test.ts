@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
 import {
   extractApiMessage,
   resolveAxiosErrorMessage,
-} from '../../src/utils/api-error-message.js';
+} from '@/utils/api-error-message.ts';
+import { describe, expect, it } from 'vitest';
 
 describe('extractApiMessage', () => {
   it('returns message when present', () => {

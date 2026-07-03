@@ -1,24 +1,36 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { getFilters } from '@/api/filters.api.ts';
+import type { CategoryItem } from '@/types/category.ts';
+import type { PaginatedResponse } from '@/types/pagination.ts';
+import {
+  afterEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type MockedFunction,
+} from 'vitest';
 
-vi.mock('../../src/api/filters.api.js', () => ({
+vi.mock('@/api/filters.api.ts', () => ({
   getFilters: vi.fn(),
 }));
 
-const CATEGORY_LIST_PATH =
-  '../../src/components/category-list/category-list.client.js';
-const FILTERS_API_PATH = '../../src/api/filters.api.js';
-const STORE_PATH = '../../src/services/store.service.js';
+const CATEGORY_LIST_PATH = '@/components/category-list/category-list.client.ts';
+const FILTERS_API_PATH = '@/api/filters.api.ts';
+const STORE_PATH = '@/services/store.service.ts';
 
-/** @type {HTMLElement} */
-let root;
-/** @type {() => void} */
-let teardown = () => {};
-/** @type {typeof import('../../src/services/store.service.js')} */
-let store;
-/** @type {ReturnType<typeof vi.fn>} */
-let getFilters;
+type StoreModule = typeof import('@/services/store.service.ts');
 
-const SAMPLE = {
+interface SetupOptions {
+  resolve?: PaginatedResponse<CategoryItem>;
+  reject?: Error;
+}
+
+let root: HTMLElement;
+let teardown: () => void = () => {};
+let store: StoreModule;
+let getFiltersMock: MockedFunction<typeof getFilters>;
+
+const SAMPLE: PaginatedResponse<CategoryItem> = {
   results: [
     { name: 'biceps', filter: 'muscles', imgURL: 'https://cdn.test/b.jpg' },
     { name: 'triceps', filter: 'muscles', imgURL: 'https://cdn.test/t.jpg' },
@@ -27,21 +39,21 @@ const SAMPLE = {
   totalPages: 1,
 };
 
-/**
- * @param {{ resolve?: unknown, reject?: Error }} behaviour
- */
-async function setup({ resolve = SAMPLE, reject } = {}) {
+async function setup({
+  resolve = SAMPLE,
+  reject,
+}: SetupOptions = {}): Promise<void> {
   localStorage.clear();
   vi.resetModules();
   vi.spyOn(console, 'error').mockImplementation(() => {});
 
   const api = await import(FILTERS_API_PATH);
-  getFilters = vi.mocked(api.getFilters);
+  getFiltersMock = vi.mocked(api.getFilters);
 
   if (reject) {
-    getFilters.mockRejectedValue(reject);
+    getFiltersMock.mockRejectedValue(reject);
   } else {
-    getFilters.mockResolvedValue(resolve);
+    getFiltersMock.mockResolvedValue(resolve);
   }
 
   store = await import(STORE_PATH);
@@ -67,7 +79,7 @@ describe('category-list island', () => {
       expect(root.querySelectorAll('.category-card')).toHaveLength(2);
     });
 
-    expect(getFilters).toHaveBeenCalledWith(
+    expect(getFiltersMock).toHaveBeenCalledWith(
       { filter: 'Muscles', page: 1 },
       { loader: 'silent' },
     );
@@ -100,7 +112,7 @@ describe('category-list island', () => {
       expect(root.querySelector('.category-card')).not.toBeNull();
     });
 
-    /** @type {HTMLElement} */ (root.querySelector('.category-card')).click();
+    root.querySelector<HTMLElement>('.category-card')!.click();
 
     expect(store.getState().category).toEqual({
       name: 'biceps',
@@ -112,15 +124,15 @@ describe('category-list island', () => {
     await setup();
 
     await vi.waitFor(() => {
-      expect(getFilters).toHaveBeenCalledTimes(1);
+      expect(getFiltersMock).toHaveBeenCalledTimes(1);
     });
 
     store.setState({ activeFilter: 'Equipment', page: 1 });
 
     await vi.waitFor(() => {
-      expect(getFilters).toHaveBeenCalledTimes(2);
+      expect(getFiltersMock).toHaveBeenCalledTimes(2);
     });
-    expect(getFilters).toHaveBeenLastCalledWith(
+    expect(getFiltersMock).toHaveBeenLastCalledWith(
       { filter: 'Equipment', page: 1 },
       { loader: 'silent' },
     );

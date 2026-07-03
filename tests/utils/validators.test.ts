@@ -1,5 +1,5 @@
+import { isValidEmail, normalizeQuery } from '@/utils/validators.ts';
 import { describe, expect, it } from 'vitest';
-import { isValidEmail, normalizeQuery } from '../../src/utils/validators.js';
 
 describe('isValidEmail', () => {
   it('accepts a valid address', () => {

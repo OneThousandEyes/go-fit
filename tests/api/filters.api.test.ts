@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/api/instance.js', () => ({
+vi.mock('@/api/instance.ts', () => ({
   http: { get: vi.fn() },
 }));
 
-import { getFilters } from '../../src/api/filters.api.js';
-import { http } from '../../src/api/instance.js';
+import { getFilters } from '@/api/filters.api.ts';
+import { http } from '@/api/instance.ts';
 
 const getMock = vi.mocked(http.get);
 

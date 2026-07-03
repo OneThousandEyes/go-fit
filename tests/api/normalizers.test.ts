@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest';
 import {
   normalizeEntity,
   normalizePaginated,
   normalizeQuote,
-} from '../../src/api/normalizers.js';
+} from '@/api/normalizers.ts';
+import { describe, expect, it } from 'vitest';
 
 describe('normalizePaginated', () => {
   it('returns results with numeric page metadata', () => {

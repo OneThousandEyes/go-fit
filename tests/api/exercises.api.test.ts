@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/api/instance.js', () => ({
+vi.mock('@/api/instance.ts', () => ({
   http: { get: vi.fn(), patch: vi.fn() },
 }));
 
-import { getExerciseById, getExercises } from '../../src/api/exercises.api.js';
-import { http } from '../../src/api/instance.js';
+import { getExerciseById, getExercises } from '@/api/exercises.api.ts';
+import { http } from '@/api/instance.ts';
 
 const getMock = vi.mocked(http.get);
 

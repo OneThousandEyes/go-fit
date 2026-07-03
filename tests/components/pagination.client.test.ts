@@ -1,16 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const PAGINATION_PATH = '../../src/components/pagination/pagination.client.js';
-const STORE_PATH = '../../src/services/store.service.js';
+const PAGINATION_PATH = '@/components/pagination/pagination.client.ts';
+const STORE_PATH = '@/services/store.service.ts';
 
-/** @type {HTMLElement} */
-let root;
-/** @type {() => void} */
-let teardown = () => {};
-/** @type {typeof import('../../src/services/store.service.js')} */
-let store;
+type StoreModule = typeof import('@/services/store.service.ts');
 
-async function setup() {
+let root: HTMLElement;
+let teardown: () => void = () => {};
+let store: StoreModule;
+
+async function setup(): Promise<void> {
   localStorage.clear();
   vi.resetModules();
 
@@ -22,8 +21,7 @@ async function setup() {
   teardown = initPagination(root);
 }
 
-/** @returns {number[]} */
-function renderedPages() {
+function renderedPages(): number[] {
   return [...root.querySelectorAll('[data-page]')].map((el) =>
     Number(el.getAttribute('data-page')),
   );
@@ -78,10 +76,10 @@ describe('pagination island', () => {
   it('sets the store page when a number button is clicked', () => {
     store.setState({ page: 1, totalPages: 5 });
 
-    const target = [...root.querySelectorAll('[data-page]')].find(
+    const target = [...root.querySelectorAll<HTMLElement>('[data-page]')].find(
       (el) => el.getAttribute('data-page') === '2',
     );
-    /** @type {HTMLElement} */ (target).click();
+    target!.click();
 
     expect(store.getState().page).toBe(2);
   });
@@ -89,9 +87,7 @@ describe('pagination island', () => {
   it('advances the page when the next arrow is clicked', () => {
     store.setState({ page: 1, totalPages: 5 });
 
-    /** @type {HTMLElement} */ (
-      root.querySelector('[data-action="next"]')
-    ).click();
+    root.querySelector<HTMLElement>('[data-action="next"]')!.click();
 
     expect(store.getState().page).toBe(2);
   });
@@ -99,8 +95,10 @@ describe('pagination island', () => {
   it('does not change the page when clicking the current one', () => {
     store.setState({ page: 2, totalPages: 5 });
 
-    const current = root.querySelector('.pagination__page--active');
-    /** @type {HTMLElement} */ (current).click();
+    const current = root.querySelector<HTMLElement>(
+      '.pagination__page--active',
+    );
+    current!.click();
 
     expect(store.getState().page).toBe(2);
   });

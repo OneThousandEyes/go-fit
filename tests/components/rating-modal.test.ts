@@ -1,45 +1,40 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/api/instance.js', () => ({
+vi.mock('@/api/instance.ts', () => ({
   http: { patch: vi.fn() },
 }));
 
-vi.mock('../../src/utils/notify.js', () => ({
+vi.mock('@/utils/notify.ts', () => ({
   notifySuccess: vi.fn(),
   notifyError: vi.fn(),
   notifyInfo: vi.fn(),
 }));
 
-import { openRatingModal } from '../../src/components/rating-modal/rating-modal.js';
-import { http } from '../../src/api/instance.js';
-import { notifySuccess } from '../../src/utils/notify.js';
+import { http } from '@/api/instance.ts';
+import { openRatingModal } from '@/components/rating-modal/rating-modal.ts';
+import { notifySuccess } from '@/utils/notify.ts';
 
 const patchMock = vi.mocked(http.patch);
 
-/** @returns {HTMLFormElement} */
-function getForm() {
-  return /** @type {HTMLFormElement} */ (
-    document.querySelector('[data-rating-form]')
-  );
+function getForm(): HTMLFormElement {
+  const form = document.querySelector<HTMLFormElement>('[data-rating-form]');
+  if (!form) {
+    throw new Error('Rating form not found');
+  }
+  return form;
 }
 
-/**
- * Fills every required field so a submit passes validation.
- * @param {HTMLFormElement} form
- */
-function fillForm(form) {
-  const radio = /** @type {HTMLInputElement} */ (
-    form.querySelector('input[name="rate"][value="4"]')
-  );
+function fillForm(form: HTMLFormElement): void {
+  const radio = form.querySelector<HTMLInputElement>(
+    'input[name="rate"][value="4"]',
+  )!;
   radio.checked = true;
   radio.dispatchEvent(new Event('change', { bubbles: true }));
 
-  /** @type {HTMLInputElement} */ (
-    form.querySelector('input[name="email"]')
-  ).value = 'user@mail.com';
-  /** @type {HTMLTextAreaElement} */ (
-    form.querySelector('textarea[name="review"]')
-  ).value = 'Great exercise!';
+  form.querySelector<HTMLInputElement>('input[name="email"]')!.value =
+    'user@mail.com';
+  form.querySelector<HTMLTextAreaElement>('textarea[name="review"]')!.value =
+    'Great exercise!';
 }
 
 describe('rating modal', () => {
@@ -66,9 +61,9 @@ describe('rating modal', () => {
     openRatingModal({ exerciseId: 'abc' });
     const form = getForm();
 
-    const radio = /** @type {HTMLInputElement} */ (
-      form.querySelector('input[name="rate"][value="3"]')
-    );
+    const radio = form.querySelector<HTMLInputElement>(
+      'input[name="rate"][value="3"]',
+    )!;
     radio.checked = true;
     radio.dispatchEvent(new Event('change', { bubbles: true }));
 
@@ -105,9 +100,9 @@ describe('rating modal', () => {
 
     form.dispatchEvent(new Event('submit', { cancelable: true }));
 
-    const button = /** @type {HTMLButtonElement} */ (
-      form.querySelector('[data-rating-submit]')
-    );
+    const button = form.querySelector<HTMLButtonElement>(
+      '[data-rating-submit]',
+    )!;
     await vi.waitFor(() => expect(button.disabled).toBe(false));
 
     expect(patchMock).toHaveBeenCalled();

@@ -1,13 +1,13 @@
+import { STORAGE_KEYS } from '@/constants/storage-keys.ts';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { STORAGE_KEYS } from '../../src/utils/constants.js';
 
-const STORE_PATH = '../../src/services/store.service.js';
+const STORE_PATH = '@/services/store.service.ts';
 
-/**
- * @param {Record<string, unknown> | null} persisted
- * @returns {Promise<typeof import('../../src/services/store.service.js')>}
- */
-async function loadStore(persisted) {
+type StoreModule = typeof import('@/services/store.service.ts');
+
+async function loadStore(
+  persisted: Record<string, unknown> | null,
+): Promise<StoreModule> {
   localStorage.clear();
   window.history.replaceState(null, '', '/');
 
@@ -86,7 +86,7 @@ describe('store.service', () => {
 
     const raw = localStorage.getItem(STORAGE_KEYS.UI_STATE);
     expect(raw).not.toBeNull();
-    expect(JSON.parse(/** @type {string} */ (raw))).toMatchObject({
+    expect(JSON.parse(raw!)).toMatchObject({
       activeFilter: 'Equipment',
       page: 2,
     });
@@ -98,9 +98,7 @@ describe('store.service', () => {
     setState({ totalPages: 9 });
 
     const raw = localStorage.getItem(STORAGE_KEYS.UI_STATE);
-    expect(JSON.parse(/** @type {string} */ (raw))).not.toHaveProperty(
-      'totalPages',
-    );
+    expect(JSON.parse(raw!)).not.toHaveProperty('totalPages');
   });
 
   it('notifies subscribers with the new frozen state', async () => {

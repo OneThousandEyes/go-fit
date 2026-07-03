@@ -1,16 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const BREADCRUMB_PATH = '../../src/components/breadcrumb/breadcrumb.client.js';
-const STORE_PATH = '../../src/services/store.service.js';
+const BREADCRUMB_PATH = '@/components/breadcrumb/breadcrumb.client.ts';
+const STORE_PATH = '@/services/store.service.ts';
 
-/** @type {HTMLElement} */
-let root;
-/** @type {() => void} */
-let teardown = () => {};
-/** @type {typeof import('../../src/services/store.service.js')} */
-let store;
+type StoreModule = typeof import('@/services/store.service.ts');
 
-async function setup() {
+let root: HTMLElement;
+let teardown: () => void = () => {};
+let store: StoreModule;
+
+async function setup(): Promise<void> {
   localStorage.clear();
   vi.resetModules();
 
@@ -52,9 +51,7 @@ describe('breadcrumb island', () => {
       keyword: 'plank',
     });
 
-    /** @type {HTMLElement} */ (
-      root.querySelector('.breadcrumb__root--link')
-    ).click();
+    root.querySelector<HTMLElement>('.breadcrumb__root--link')!.click();
 
     const state = store.getState();
     expect(state.category).toBeNull();

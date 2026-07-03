@@ -1,16 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const FILTERS_PATH = '../../src/components/filters/filters.client.js';
-const STORE_PATH = '../../src/services/store.service.js';
+const FILTERS_PATH = '@/components/filters/filters.client.ts';
+const STORE_PATH = '@/services/store.service.ts';
 
-/** @type {HTMLElement} */
-let root;
-/** @type {() => void} */
-let teardown = () => {};
-/** @type {typeof import('../../src/services/store.service.js')} */
-let store;
+type StoreModule = typeof import('@/services/store.service.ts');
 
-async function setup() {
+let root: HTMLElement;
+let teardown: () => void = () => {};
+let store: StoreModule;
+
+async function setup(): Promise<void> {
   localStorage.clear();
   vi.resetModules();
 
@@ -22,12 +21,16 @@ async function setup() {
   teardown = initFilters(root);
 }
 
-/** @param {string} label @returns {HTMLElement} */
-function tabByLabel(label) {
+function tabByLabel(label: string): HTMLElement {
   const tab = [...root.querySelectorAll('[data-filter]')].find(
     (el) => el.getAttribute('data-filter') === label,
   );
-  return /** @type {HTMLElement} */ (tab);
+
+  if (!tab || !(tab instanceof HTMLElement)) {
+    throw new Error(`Tab not found: ${label}`);
+  }
+
+  return tab;
 }
 
 describe('filters island', () => {

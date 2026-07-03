@@ -1,5 +1,5 @@
+import { readJSON, writeJSON } from '@/services/storage.service.ts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readJSON, writeJSON } from '../../src/services/storage.service.js';
 
 const KEY = 'test:key';
 
