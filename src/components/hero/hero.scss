@@ -102,15 +102,18 @@
 
 .hero-main-img-container {
   width: 100%;
+  aspect-ratio: 335 / 460;
   border-radius: 60px;
   overflow: hidden;
   margin-bottom: 20px;
 
   @include respond($bp-tablet) {
+    aspect-ratio: 704 / 550;
     margin-bottom: 16px;
   }
 
-  @include respond($bp-desktop) {
+  @media (min-width: 1376px) {
+    aspect-ratio: 1376 / 350;
     margin-bottom: 0;
   }
 }
