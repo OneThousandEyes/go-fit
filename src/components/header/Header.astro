@@ -1,7 +1,7 @@
 ---
-import { NAV_ITEMS } from '../../constants/navigation';
-import { withBase } from '../../utils/withBase';
-import { isNavActive } from '../../utils/isNavActive';
+import { NAV_ITEMS, ROUTES } from '@/constants/navigation';
+import { withBase } from '@/utils/withBase';
+import { isNavActive } from '@/utils/isNavActive';
 
 const SOCIALS = [
   {
@@ -26,9 +26,9 @@ interface Props {
 }
 
 const { currentPath } = Astro.props as Props;
-const homeHref = withBase(NAV_ITEMS[0].path);
-const favoritesHref = withBase(NAV_ITEMS[1].path);
-const isFavorites = isNavActive('favorites', currentPath);
+const homeHref = withBase(ROUTES.HOME);
+const favoritesHref = withBase(ROUTES.FAVORITES);
+const isFavorites = isNavActive(ROUTES.FAVORITES, currentPath);
 ---
 
 <header class="header">
@@ -188,7 +188,7 @@ const isFavorites = isNavActive('favorites', currentPath);
 </header>
 
 <script>
-  import { initHeader } from './header.client.js';
+  import { initHeader } from './header.client.ts';
 
   initHeader(document.querySelector('[data-component="header"]'));
 </script>

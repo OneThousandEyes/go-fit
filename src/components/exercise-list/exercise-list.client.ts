@@ -1,35 +1,25 @@
-import { getExercises } from '../../api/exercises.api.js';
-import { getState, setState } from '../../services/store.service.js';
-import { FILTER_PARAM, LOADER } from '../../utils/constants.js';
-import { renderExerciseCard } from '../exercise-card/render-exercise-card.js';
-import { openExerciseModal } from '../exercise-modal/exercise-modal.js';
-import { createListStatus } from '../shared/list-status.js';
-import { bindStoreIsland } from '../shared/store-island.js';
+import { getExercises } from '@/api/exercises.api.ts';
+import { renderExerciseCard } from '@/components/exercise-card/render-exercise-card.ts';
+import { openExerciseModal } from '@/components/exercise-modal/exercise-modal.ts';
+import { createListStatus } from '@/components/shared/list-status.ts';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { FILTER_PARAM, type FilterType } from '@/constants/filters.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { getState, setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import type { Exercise } from '@/types/exercise.ts';
 
 const BLOCK = 'exercise-list';
 const status = createListStatus(BLOCK);
 
-/** @type {string | null} */
-let inflightKey = null;
+let inflightKey: string | null = null;
 
-/**
- * @typedef {import('../../services/store.service.js').AppState} AppState
- */
-
-/**
- * @param {Readonly<AppState>} state
- * @returns {string}
- */
-function requestKeyOf(state) {
+function requestKeyOf(state: Readonly<AppState>): string {
   const categoryName = state.category ? state.category.name : '';
   return `${state.activeFilter}|${categoryName}|${state.keyword}|${state.page}`;
 }
 
-/**
- * @param {HTMLElement} root
- * @param {object[]} items
- */
-function render(root, items) {
+function render(root: HTMLElement, items: Exercise[]): void {
   status.hideRefreshing(root);
 
   if (!items.length) {
@@ -40,17 +30,10 @@ function render(root, items) {
     return;
   }
 
-  root.innerHTML = items
-    .map((item) =>
-      renderExerciseCard(/** @type {Record<string, unknown>} */ (item)),
-    )
-    .join('');
+  root.innerHTML = items.map((item) => renderExerciseCard(item)).join('');
 }
 
-/**
- * @param {HTMLElement} root
- */
-async function loadExercises(root) {
+async function loadExercises(root: HTMLElement): Promise<void> {
   const state = getState();
 
   if (!state.category) return;
@@ -69,7 +52,7 @@ async function loadExercises(root) {
     status.renderLoading(root, 'Loading exercises…');
   }
 
-  const paramKey = FILTER_PARAM[state.activeFilter];
+  const paramKey = FILTER_PARAM[state.activeFilter as FilterType];
 
   try {
     const {
@@ -90,8 +73,7 @@ async function loadExercises(root) {
     render(root, results);
 
     const current = getState();
-    /** @type {Partial<AppState>} */
-    const patch = {};
+    const patch: Partial<AppState> = {};
 
     if (current.totalPages !== totalPages) patch.totalPages = totalPages;
     if (current.page !== responsePage) patch.page = responsePage;
@@ -105,18 +87,13 @@ async function loadExercises(root) {
   }
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initExerciseList(root) {
+export function initExerciseList(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
-  /** @type {string} */
   let lastKey = '';
 
-  const onClick = (/** @type {Event} */ event) => {
-    const target = /** @type {HTMLElement} */ (event.target);
+  const onClick = (event: Event) => {
+    const target = event.target as HTMLElement;
 
     const card = target.closest('.exercise-card');
     if (!card || !root.contains(card)) return;
@@ -129,7 +106,7 @@ export function initExerciseList(root) {
     openExerciseModal(id);
   };
 
-  const sync = (/** @type {Readonly<AppState>} */ state) => {
+  const sync = (state: Readonly<AppState>) => {
     const isExercisesView = state.category !== null;
 
     root.hidden = !isExercisesView;

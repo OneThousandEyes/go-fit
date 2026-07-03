@@ -1,22 +1,13 @@
-import { getExerciseById } from '../../api/exercises.api.js';
-import {
-  isFavorite,
-  toggleFavorite,
-} from '../../services/favorites.service.js';
-import { LOADER } from '../../utils/constants.js';
-import { escapeHtml } from '../../utils/escape-html.js';
-import { SPRITE_ICON, renderSpriteIcon } from '../../utils/sprite-icon.js';
-import { openRatingModal } from '../rating-modal/rating-modal.js';
-import { openModal } from '../ui/modal/modal.js';
+import { getExerciseById } from '@/api/exercises.api.ts';
+import { openRatingModal } from '@/components/rating-modal/rating-modal.ts';
+import { openModal } from '@/components/ui/modal/modal.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { isFavorite, toggleFavorite } from '@/services/favorites.service.ts';
+import type { Exercise } from '@/types/exercise.ts';
+import { escapeHtml } from '@/utils/escape-html.ts';
+import { SPRITE_ICON, renderSpriteIcon } from '@/utils/sprite-icon.ts';
 
-/** @typedef {import('../../types/exercise').Exercise} Exercise */
-
-/**
- * Generate content for button
- * @param {boolean} isFav
- * @returns {string} HTML
- */
-function getFavButtonContent(isFav) {
+function getFavButtonContent(isFav: boolean): string {
   const text = isFav ? 'Remove from favorites' : 'Add to favorites';
   const iconName = isFav ? SPRITE_ICON.TRASH : SPRITE_ICON.HEART;
 
@@ -31,12 +22,7 @@ function getFavButtonContent(isFav) {
   return `<span>${text}</span> ${iconHtml}`;
 }
 
-/**
- * Render rating
- * @param {number | string} rating
- * @returns {string} HTML
- */
-function renderRating(rating) {
+function renderRating(rating: number | string): string {
   const numericRating = Number(rating) || 0;
   const ratingPercentage = (numericRating / 5) * 100;
 
@@ -62,12 +48,7 @@ function renderRating(rating) {
   `;
 }
 
-/**
- * Render list of exercise features
- * @param {Exercise} exercise
- * @returns {string} HTML
- */
-function renderStatsList(exercise) {
+function renderStatsList(exercise: Exercise): string {
   const statsConfig = [
     { label: 'Target', value: exercise.target },
     { label: 'Body Part', value: exercise.bodyPart },
@@ -83,7 +64,7 @@ function renderStatsList(exercise) {
           (stat) => `
         <li class="exercise-modal__stats-list-item">
           <span class="label">${stat.label}</span>
-          <span class="value">${escapeHtml(stat.value)}</span>
+          <span class="value">${escapeHtml(String(stat.value ?? ''))}</span>
         </li>
       `,
         )
@@ -92,12 +73,7 @@ function renderStatsList(exercise) {
   `;
 }
 
-/**
- * Render modal content
- * @param {Exercise} exercise
- * @returns {string} HTML
- */
-function renderExerciseContent(exercise) {
+function renderExerciseContent(exercise: Exercise): string {
   const isFav = isFavorite(exercise._id);
 
   const imageHtml = exercise.gifUrl
@@ -115,7 +91,7 @@ function renderExerciseContent(exercise) {
           ${renderRating(Number(exercise.rating))}
           ${renderStatsList(exercise)}
 
-          <p class="exercise-modal__description">${escapeHtml(exercise.description)}</p>
+          <p class="exercise-modal__description">${escapeHtml(exercise.description ?? '')}</p>
 
           <div class="exercise-modal__actions">
             <button class="exercise-modal__btn-fav" type="button" data-action="fav">
@@ -141,12 +117,16 @@ const LOADING_CONTENT = `
   </div>
 `;
 
-/**
- * @param {Exercise} exerciseData
- * @param {string} exerciseId
- * @param {{ onClose?: () => void, onToggleFavorite?: () => void }} options
- */
-function bindExerciseModalActions(exerciseData, exerciseId, options) {
+export interface OpenExerciseModalOptions {
+  onClose?: () => void;
+  onToggleFavorite?: () => void;
+}
+
+function bindExerciseModalActions(
+  exerciseData: Exercise,
+  exerciseId: string,
+  options: OpenExerciseModalOptions,
+): void {
   const modalRoot = document.getElementById('modal-root');
   const actionsContainer = modalRoot?.querySelector('.exercise-modal__actions');
 
@@ -154,9 +134,7 @@ function bindExerciseModalActions(exerciseData, exerciseId, options) {
     const target = event.target;
     if (!(target instanceof Element)) return;
 
-    const button = /** @type {HTMLButtonElement | null} */ (
-      target.closest('button')
-    );
+    const button = target.closest('button') as HTMLButtonElement | null;
     if (!button) return;
 
     const action = button.dataset.action;
@@ -177,12 +155,10 @@ function bindExerciseModalActions(exerciseData, exerciseId, options) {
   });
 }
 
-/**
- * @param {string} exerciseId
- * @param {{ onClose?: () => void, onToggleFavorite?: () => void }} [options]
- * @returns {Promise<(() => void) | undefined>}
- */
-export async function openExerciseModal(exerciseId, options = {}) {
+export async function openExerciseModal(
+  exerciseId: string,
+  options: OpenExerciseModalOptions = {},
+): Promise<(() => void) | undefined> {
   const close = openModal({
     name: 'exercise',
     label: 'Exercise details',
@@ -191,9 +167,9 @@ export async function openExerciseModal(exerciseId, options = {}) {
   });
 
   try {
-    const exerciseData = /** @type {Exercise} */ (
-      await getExerciseById(exerciseId, { loader: LOADER.EXERCISE_MODAL })
-    );
+    const exerciseData = await getExerciseById(exerciseId, {
+      loader: LOADER.EXERCISE_MODAL,
+    });
 
     const host = document.querySelector('[data-component="exercise-modal"]');
     if (!host) return close;

@@ -1,5 +1,5 @@
 ---
-import { renderSpriteIcon, SPRITE_ICON } from '../../utils/sprite-icon.js';
+import { renderSpriteIcon, SPRITE_ICON } from '@/utils/sprite-icon.ts';
 
 const searchIcon = renderSpriteIcon(SPRITE_ICON.SEARCH, {
   className: 'search__icon',
@@ -34,7 +34,7 @@ const clearIcon = renderSpriteIcon(SPRITE_ICON.CLOSE, {
 </form>
 
 <script>
-  import { initSearch } from './search.client.js';
+  import { initSearch } from './search.client.ts';
 
   initSearch(document.querySelector('[data-component="search"]'));
 </script>

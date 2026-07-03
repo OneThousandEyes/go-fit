@@ -1,25 +1,18 @@
-import { rateExercise } from '../../api/exercises.api.js';
-import { EMAIL_PATTERN, LOADER } from '../../utils/constants.js';
-import { notifySuccess } from '../../utils/notify.js';
-import { SPRITE_ICON, renderSpriteIcon } from '../../utils/sprite-icon.js';
-import { setButtonLoading } from '../ui/button/button.js';
-import { openModal } from '../ui/modal/modal.js';
+import { rateExercise } from '@/api/exercises.api.ts';
+import { setButtonLoading } from '@/components/ui/button/button.ts';
+import { openModal } from '@/components/ui/modal/modal.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { EMAIL_PATTERN } from '@/constants/patterns.ts';
+import { notifySuccess } from '@/utils/notify.ts';
+import { SPRITE_ICON, renderSpriteIcon } from '@/utils/sprite-icon.ts';
 
 const MAX_RATING = 5;
 
-// The HTML `pattern` attribute is implicitly anchored, so drop the ^ / $ from
-// the shared EMAIL_PATTERN and reuse the exact same contract for native validation.
 const EMAIL_HTML_PATTERN = EMAIL_PATTERN.source
   .replace(/^\^/, '')
   .replace(/\$$/, '');
 
-/**
- * Renders the five star radios in reverse order (5 → 1) so a checked radio can
- * light itself and every lower star through the CSS sibling combinator, while
- * `flex-direction: row-reverse` restores the visual 1 → 5 order.
- * @returns {string}
- */
-function renderStars() {
+function renderStars(): string {
   let markup = '';
 
   for (let value = MAX_RATING; value >= 1; value -= 1) {
@@ -48,10 +41,7 @@ function renderStars() {
   return markup;
 }
 
-/**
- * @returns {string} the modal body markup (form + fields)
- */
-function renderContent() {
+function renderContent(): string {
   return `
     <form class="rating-modal" data-rating-form>
       <p class="rating-modal__label">Rating</p>
@@ -93,19 +83,14 @@ function renderContent() {
     </form>`;
 }
 
-/**
- * Sends the rating to the backend. On success the modal closes; on failure the
- * axios interceptor already shows the error toast, so we only keep the modal
- * open and re-enable the button for a retry.
- * @param {HTMLFormElement} form
- * @param {string} exerciseId
- * @param {() => void} close
- * @returns {Promise<void>}
- */
-async function submitRating(form, exerciseId, close) {
-  const submitButton = /** @type {HTMLButtonElement} */ (
-    form.querySelector('[data-rating-submit]')
-  );
+async function submitRating(
+  form: HTMLFormElement,
+  exerciseId: string,
+  close: () => void,
+): Promise<void> {
+  const submitButton = form.querySelector(
+    '[data-rating-submit]',
+  ) as HTMLButtonElement;
   const data = new FormData(form);
   const payload = {
     rate: Number(data.get('rate')),
@@ -124,17 +109,15 @@ async function submitRating(form, exerciseId, close) {
   }
 }
 
-/**
- * Opens the rating modal for a given exercise. The shared modal shell closes any
- * open modal first (so the exercise modal steps aside) and calls `onClose` after
- * this one closes (so the caller can re-open the exercise modal).
- *
- * @param {object} [options]
- * @param {string} [options.exerciseId] - id of the exercise being rated
- * @param {() => void} [options.onClose] - fired after the rating modal closes
- * @returns {() => void} close function
- */
-export function openRatingModal({ exerciseId, onClose } = {}) {
+export interface OpenRatingModalOptions {
+  exerciseId?: string;
+  onClose?: () => void;
+}
+
+export function openRatingModal({
+  exerciseId,
+  onClose,
+}: OpenRatingModalOptions = {}): () => void {
   const close = openModal({
     name: 'rating',
     label: 'Rate this exercise',
@@ -143,17 +126,17 @@ export function openRatingModal({ exerciseId, onClose } = {}) {
   });
 
   const root = document.getElementById('modal-root');
-  const form = /** @type {HTMLFormElement | null} */ (
-    root?.querySelector('[data-rating-form]') ?? null
-  );
+  const form = root?.querySelector(
+    '[data-rating-form]',
+  ) as HTMLFormElement | null;
   if (!form) return close;
 
-  const valueEl = /** @type {HTMLElement | null} */ (
-    form.querySelector('[data-rating-value]')
-  );
+  const valueEl = form.querySelector(
+    '[data-rating-value]',
+  ) as HTMLElement | null;
 
   form.addEventListener('change', (event) => {
-    const target = /** @type {HTMLInputElement} */ (event.target);
+    const target = event.target as HTMLInputElement;
     if (valueEl && target.name === 'rate') {
       valueEl.textContent = Number(target.value).toFixed(1);
     }
@@ -161,7 +144,9 @@ export function openRatingModal({ exerciseId, onClose } = {}) {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    submitRating(form, /** @type {string} */ (exerciseId), close);
+    if (exerciseId) {
+      submitRating(form, exerciseId, close);
+    }
   });
 
   return close;

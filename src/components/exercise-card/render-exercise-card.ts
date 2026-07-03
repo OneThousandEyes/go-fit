@@ -1,6 +1,7 @@
-import { escapeHtml } from '../../utils/escape-html.js';
-import { renderSpriteIcon, SPRITE_ICON } from '../../utils/sprite-icon.js';
-import { renderBadge } from '../ui/badge/badge.js';
+import { renderBadge } from '@/components/ui/badge/badge.ts';
+import type { Exercise } from '@/types/exercise.ts';
+import { escapeHtml } from '@/utils/escape-html.ts';
+import { renderSpriteIcon, SPRITE_ICON } from '@/utils/sprite-icon.ts';
 
 const RUNNER_ICON = renderSpriteIcon(SPRITE_ICON.RUNNING, {
   className: 'exercise-card__icon-glyph',
@@ -29,30 +30,17 @@ const ARROW_ICON = renderSpriteIcon(SPRITE_ICON.ARROW_UP_RIGHT, {
   stroke: true,
 });
 
-/**
- * @param {unknown} rating
- * @returns {string}
- */
-function formatRating(rating) {
+function formatRating(rating: unknown): string {
   const value = Number(rating);
   return (Number.isFinite(value) ? value : 0).toFixed(1);
 }
 
-/**
- * @param {unknown} calories
- * @returns {string}
- */
-function formatCalories(calories) {
+function formatCalories(calories: unknown): string {
   const value = Number(calories);
   return Number.isFinite(value) ? `${value} / 3 min` : '—';
 }
 
-/**
- * @param {string} label
- * @param {string} value
- * @returns {string}
- */
-function renderMetaItem(label, value) {
+function renderMetaItem(label: string, value: string): string {
   return `
     <li class="exercise-card__meta-item">
       <span class="exercise-card__meta-label">${escapeHtml(label)}</span>
@@ -60,11 +48,7 @@ function renderMetaItem(label, value) {
     </li>`;
 }
 
-/**
- * @param {string} id
- * @returns {string}
- */
-function renderStartButton(id) {
+function renderStartButton(id: string): string {
   return `
     <button
       type="button"
@@ -76,12 +60,7 @@ function renderStartButton(id) {
     </button>`;
 }
 
-/**
- * @param {string} id
- * @param {unknown} rating
- * @returns {string}
- */
-function renderRating(id, rating) {
+function renderRating(id: string, rating: unknown): string {
   void id;
 
   return `
@@ -91,11 +70,7 @@ function renderRating(id, rating) {
     </span>`;
 }
 
-/**
- * @param {string} id
- * @returns {string}
- */
-function renderRemoveButton(id) {
+function renderRemoveButton(id: string): string {
   return `
     <button
       type="button"
@@ -107,13 +82,11 @@ function renderRemoveButton(id) {
     </button>`;
 }
 
-/**
- * @param {string} id
- * @param {'catalog' | 'favorite'} variant
- * @param {unknown} rating
- * @returns {string}
- */
-function renderCardTop(id, variant, rating) {
+function renderCardTop(
+  id: string,
+  variant: 'catalog' | 'favorite',
+  rating: unknown,
+): string {
   const actionMarkup =
     variant === 'favorite' ? renderRemoveButton(id) : renderRating(id, rating);
 
@@ -125,14 +98,14 @@ function renderCardTop(id, variant, rating) {
     </div>`;
 }
 
-/**
- * @param {{ _id?: unknown, name?: unknown, rating?: unknown, burnedCalories?: unknown, bodyPart?: unknown, target?: unknown }} exercise
- * @param {{ variant?: 'catalog' | 'favorite' }} [options]
- * @returns {string}
- * @example
- * renderExerciseCard({ _id: '1', name: 'Air bike', rating: 4, burnedCalories: 312, bodyPart: 'waist', target: 'abs' });
- */
-export function renderExerciseCard(exercise, options = {}) {
+export interface RenderExerciseCardOptions {
+  variant?: 'catalog' | 'favorite';
+}
+
+export function renderExerciseCard(
+  exercise: Partial<Exercise>,
+  options: RenderExerciseCardOptions = {},
+): string {
   const variant = options.variant ?? 'catalog';
   const id = String(exercise._id ?? '');
   const name = String(exercise.name ?? '');
@@ -156,10 +129,8 @@ export function renderExerciseCard(exercise, options = {}) {
     </li>`;
 }
 
-/**
- * @param {Parameters<typeof renderExerciseCard>[0]} exercise
- * @returns {string}
- */
-export function renderFavoriteExerciseCard(exercise) {
+export function renderFavoriteExerciseCard(
+  exercise: Partial<Exercise>,
+): string {
   return renderExerciseCard(exercise, { variant: 'favorite' });
 }

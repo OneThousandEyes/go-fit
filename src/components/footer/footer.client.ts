@@ -1,16 +1,12 @@
-import { subscribe } from '../../api/subscription.api.js';
-import { extractApiMessage } from '../../utils/api-error-message.js';
-import { LOADER } from '../../utils/constants.js';
-import { notifySuccess } from '../../utils/notify.js';
-import { setButtonLoading } from '../ui/button/button.js';
+import { subscribe } from '@/api/subscription.api.ts';
+import { setButtonLoading } from '@/components/ui/button/button.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { extractApiMessage } from '@/utils/api-error-message.ts';
+import { notifySuccess } from '@/utils/notify.ts';
 
 const BUTTON_LOADING_CLASS = 'footer__button--loading';
 
-/**
- * @param {HTMLElement | null} root
- * @returns {void}
- */
-export function initFooter(root) {
+export function initFooter(root: HTMLElement | null): void {
   if (!root) return;
 
   const form = root.querySelector('[data-footer-form]');

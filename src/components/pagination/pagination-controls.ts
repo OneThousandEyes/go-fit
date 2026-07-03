@@ -1,19 +1,13 @@
-import { renderPagination, resolveActionPage } from './pagination-view.js';
+import type { PaginationState } from '@/types/pagination.ts';
+import { renderPagination, resolveActionPage } from './pagination-view.ts';
 
-/**
- * @typedef {object} PaginationState
- * @property {number} page
- * @property {number} totalPages
- */
-
-/**
- * @param {HTMLElement} root
- * @param {PaginationState} state
- * @param {(page: number) => void} onPageChange
- * @param {Event} event
- */
-export function handlePaginationClick(root, state, onPageChange, event) {
-  const target = /** @type {HTMLElement} */ (event.target);
+export function handlePaginationClick(
+  root: HTMLElement,
+  state: PaginationState,
+  onPageChange: (page: number) => void,
+  event: Event,
+): void {
+  const target = event.target as HTMLElement;
   const control = target.closest('[data-page], [data-action]');
 
   if (!control || !root.contains(control)) return;
@@ -45,22 +39,22 @@ export function handlePaginationClick(root, state, onPageChange, event) {
   onPageChange(nextPage);
 }
 
-/**
- * @param {HTMLElement | null} root
- * @param {{
- *   getState: () => PaginationState;
- *   onPageChange: (page: number) => void;
- * }} options
- * @returns {() => void} teardown
- */
-export function bindPaginationControls(root, { getState, onPageChange }) {
+export interface BindPaginationControlsOptions {
+  getState: () => PaginationState;
+  onPageChange: (page: number) => void;
+}
+
+export function bindPaginationControls(
+  root: HTMLElement | null,
+  { getState, onPageChange }: BindPaginationControlsOptions,
+): () => void {
   if (!root) return () => {};
 
   const sync = () => {
     renderPagination(root, getState());
   };
 
-  const onClick = (/** @type {Event} */ event) => {
+  const onClick = (event: Event) => {
     handlePaginationClick(root, getState(), onPageChange, event);
   };
 

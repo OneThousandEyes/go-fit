@@ -1,20 +1,15 @@
-import { getState, setState } from '../../services/store.service.js';
-import { DEFAULT_FILTER } from '../../utils/constants.js';
-import { bindStoreIsland } from '../shared/store-island.js';
-import { handlePaginationClick } from './pagination-controls.js';
-import { renderPagination } from './pagination-view.js';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { DEFAULT_FILTER } from '@/constants/filters.ts';
+import { getState, setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import { handlePaginationClick } from './pagination-controls.ts';
+import { renderPagination } from './pagination-view.ts';
 
-/**
- * @typedef {import('../../services/store.service.js').AppState} AppState
- */
-
-/**
- * @param {Readonly<AppState>} state
- * @param {number} ssrPage
- * @param {number} ssrTotalPages
- * @returns {boolean}
- */
-function matchesSsrState(state, ssrPage, ssrTotalPages) {
+function matchesSsrState(
+  state: Readonly<AppState>,
+  ssrPage: number,
+  ssrTotalPages: number,
+): boolean {
   return (
     state.category === null &&
     state.activeFilter === DEFAULT_FILTER &&
@@ -23,11 +18,7 @@ function matchesSsrState(state, ssrPage, ssrTotalPages) {
   );
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initPagination(root) {
+export function initPagination(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
   const ssrPage = Number(root.dataset.ssrPage);
@@ -50,12 +41,12 @@ export function initPagination(root) {
   let skipSsrRender =
     canReuseSsr && matchesSsrState(getState(), ssrPage, ssrTotalPages);
 
-  const onClick = (/** @type {Event} */ event) => {
+  const onClick = (event: Event) => {
     const state = getState();
     handlePaginationClick(root, state, (page) => setState({ page }), event);
   };
 
-  const sync = (/** @type {Readonly<AppState>} */ state) => {
+  const sync = (state: Readonly<AppState>) => {
     if (skipSsrRender && matchesSsrState(state, ssrPage, ssrTotalPages)) {
       skipSsrRender = false;
       root.hidden = state.totalPages <= 1;

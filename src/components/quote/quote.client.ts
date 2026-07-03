@@ -1,23 +1,16 @@
-import { getQuote } from '../../api/quote.api.js';
-import { readJSON, writeJSON } from '../../services/storage.service.js';
-import { LOADER, STORAGE_KEYS } from '../../utils/constants.js';
+import { getQuote } from '@/api/quote.api.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { STORAGE_KEYS } from '@/constants/storage-keys.ts';
+import { readJSON, writeJSON } from '@/services/storage.service.ts';
+import type { CachedQuote } from '@/types/quote.ts';
 
-/**
- * @typedef {{ date: string, quote: string, author: string }} CachedQuote
- */
-
-/**
- * @returns {string}
- */
-function getTodayKey() {
+function getTodayKey(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-/**
- * @param {HTMLElement} root
- * @returns {{ quote: string, author: string } | null}
- */
-function readSsrQuote(root) {
+function readSsrQuote(
+  root: HTMLElement,
+): { quote: string; author: string } | null {
   const quote = root.querySelector('[data-quote-text]')?.textContent?.trim();
   const author = root.querySelector('[data-quote-author]')?.textContent?.trim();
 
@@ -26,11 +19,7 @@ function readSsrQuote(root) {
   return { quote, author };
 }
 
-/**
- * @param {HTMLElement} root
- * @param {CachedQuote} cached
- */
-function renderCachedQuote(root, cached) {
+function renderCachedQuote(root: HTMLElement, cached: CachedQuote): void {
   const textEl = root.querySelector('[data-quote-text]');
   const authorEl = root.querySelector('[data-quote-author]');
 
@@ -47,12 +36,7 @@ function renderCachedQuote(root, cached) {
   authorEl.textContent = cached.author;
 }
 
-/**
- * @param {HTMLElement} root
- * @param {string} quote
- * @param {string} author
- */
-function renderQuote(root, quote, author) {
+function renderQuote(root: HTMLElement, quote: string, author: string): void {
   const textEl = root.querySelector('[data-quote-text]');
   const authorEl = root.querySelector('[data-quote-author]');
 
@@ -62,19 +46,12 @@ function renderQuote(root, quote, author) {
   authorEl.textContent = author;
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {Promise<void>}
- */
-export async function initQuote(root) {
+export async function initQuote(root: HTMLElement | null): Promise<void> {
   if (!root) return;
 
   const today = getTodayKey();
   const ssrQuote = readSsrQuote(root);
-  const cached = readJSON(
-    STORAGE_KEYS.QUOTE,
-    /** @type {CachedQuote | null} */ (null),
-  );
+  const cached = readJSON<CachedQuote | null>(STORAGE_KEYS.QUOTE, null);
 
   if (cached?.date === today) {
     renderCachedQuote(root, cached);

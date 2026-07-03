@@ -1,10 +1,18 @@
-import { escapeHtml } from '../../utils/escape-html.js';
+import { escapeHtml } from '@/utils/escape-html.ts';
 
-/**
- * @param {{ name: string, filter: string, imgURL: string, caption: string }} props
- * @returns {string}
- */
-export function renderCategoryCard({ name, filter, imgURL, caption }) {
+export interface RenderCategoryCardProps {
+  name: string;
+  filter: string;
+  imgURL: string;
+  caption: string;
+}
+
+export function renderCategoryCard({
+  name,
+  filter,
+  imgURL,
+  caption,
+}: RenderCategoryCardProps): string {
   const safeUrl = encodeURI(String(imgURL ?? '')).replace(/'/g, '%27');
 
   return `

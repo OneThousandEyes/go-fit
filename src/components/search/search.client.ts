@@ -1,38 +1,28 @@
-import { getState, setState } from '../../services/store.service.js';
-import { normalizeQuery } from '../../utils/validators.js';
-import { bindStoreIsland } from '../shared/store-island.js';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { getState, setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import { normalizeQuery } from '@/utils/validators.ts';
 
-/**
- * @typedef {import('../../services/store.service.js').AppState} AppState
- */
-
-/**
- * @param {HTMLInputElement} input
- * @param {HTMLButtonElement | null} clearButton
- */
-function updateClearVisibility(input, clearButton) {
+function updateClearVisibility(
+  input: HTMLInputElement,
+  clearButton: HTMLButtonElement | null,
+): void {
   if (!clearButton) return;
 
   clearButton.hidden = input.value.length === 0;
 }
 
-/**
- * @param {HTMLFormElement | null} root
- * @returns {() => void} teardown
- */
-export function initSearch(root) {
+export function initSearch(root: HTMLFormElement | null): () => void {
   if (!root) return () => {};
 
-  const input = /** @type {HTMLInputElement | null} */ (
-    root.querySelector('.search__input')
-  );
-  const clearButton = /** @type {HTMLButtonElement | null} */ (
-    root.querySelector('.search__clear')
-  );
+  const input = root.querySelector('.search__input') as HTMLInputElement | null;
+  const clearButton = root.querySelector(
+    '.search__clear',
+  ) as HTMLButtonElement | null;
 
   if (!input) return () => {};
 
-  const applyKeyword = (/** @type {string} */ keyword) => {
+  const applyKeyword = (keyword: string) => {
     input.value = keyword;
     updateClearVisibility(input, clearButton);
 
@@ -41,7 +31,7 @@ export function initSearch(root) {
     setState({ keyword, page: 1 });
   };
 
-  const onSubmit = (/** @type {Event} */ event) => {
+  const onSubmit = (event: Event) => {
     event.preventDefault();
     applyKeyword(normalizeQuery(input.value));
   };
@@ -55,7 +45,7 @@ export function initSearch(root) {
     input.focus();
   };
 
-  const sync = (/** @type {Readonly<AppState>} */ state) => {
+  const sync = (state: Readonly<AppState>) => {
     root.hidden = state.category === null;
 
     if (document.activeElement !== input) {

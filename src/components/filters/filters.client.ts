@@ -1,12 +1,9 @@
-import { getState, setState } from '../../services/store.service.js';
-import { bindStoreIsland } from '../shared/store-island.js';
-import { renderFiltersMarkup } from './render-filters.js';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { getState, setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import { renderFiltersMarkup } from './render-filters.ts';
 
-/**
- * @param {HTMLElement} root
- * @param {string} activeFilter
- */
-function render(root, activeFilter) {
+function render(root: HTMLElement, activeFilter: string): void {
   const tabs = root.querySelectorAll('[data-filter]');
 
   if (tabs.length > 0) {
@@ -24,10 +21,7 @@ function render(root, activeFilter) {
   root.innerHTML = renderFiltersMarkup(activeFilter);
 }
 
-/**
- * @param {string} filter
- */
-function selectFilter(filter) {
+function selectFilter(filter: string): void {
   const { activeFilter } = getState();
 
   if (filter === activeFilter) return;
@@ -40,15 +34,11 @@ function selectFilter(filter) {
   });
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initFilters(root) {
+export function initFilters(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
-  const onClick = (/** @type {Event} */ event) => {
-    const target = /** @type {HTMLElement} */ (event.target);
+  const onClick = (event: Event) => {
+    const target = event.target as HTMLElement;
     const tab = target.closest('[data-filter]');
 
     if (!tab || !root.contains(tab)) return;
@@ -56,9 +46,7 @@ export function initFilters(root) {
     selectFilter(tab.getAttribute('data-filter') ?? '');
   };
 
-  const sync = (
-    /** @type {import('../../services/store.service.js').AppState} */ state,
-  ) => render(root, state.activeFilter);
+  const sync = (state: AppState) => render(root, state.activeFilter);
 
   return bindStoreIsland(sync, { root, listeners: [['click', onClick]] });
 }

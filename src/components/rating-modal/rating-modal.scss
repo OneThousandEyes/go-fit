@@ -1,7 +1,5 @@
 @use '../../styles/abstracts' as *;
 
-// Dark surface for the rating modal (scoped via the shell's `data-modal` hook,
-// so the shared white modal shell is untouched for other modals).
 .modal[data-modal='rating'] {
   .modal__dialog {
     width: min(430px, 92vw);
@@ -65,13 +63,11 @@
     height: 24px;
   }
 
-  // Hover preview: fill the hovered star and every star to its left.
   &__stars:hover .rating-modal__star:hover,
   &__stars:hover .rating-modal__star:hover ~ .rating-modal__star {
     color: $color-star;
   }
 
-  // Selected value: the checked radio lights its own star and all lower ones.
   &__radio:checked ~ .rating-modal__star {
     color: $color-star;
   }
@@ -124,8 +120,6 @@
       opacity: 0.85;
     }
 
-    // The shared `.button--loading` spinner is white; recolor it dark so it
-    // stays visible on the light Send button.
     &.button--loading::after {
       border-color: rgba($color-heading, 0.35);
       border-top-color: $color-heading;

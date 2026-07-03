@@ -1,10 +1,6 @@
 const OPEN_CLASS = 'mobile-menu--open';
 
-/**
- * @param {HTMLElement | null} root
- * @returns {void}
- */
-export function initHeader(root) {
+export function initHeader(root: HTMLElement | null): void {
   if (!root) return;
 
   const menu = root.querySelector('[data-menu]');
@@ -12,10 +8,7 @@ export function initHeader(root) {
   const closeBtn = root.querySelector('[data-menu-close]');
   if (!menu || !openBtn) return;
 
-  /**
-   * @param {boolean} isLocked
-   */
-  const setScrollLock = (isLocked) => {
+  const setScrollLock = (isLocked: boolean) => {
     document.body.style.overflow = isLocked ? 'hidden' : '';
   };
 

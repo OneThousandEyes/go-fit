@@ -1,5 +1,5 @@
 ---
-import { getQuote } from '../../api/quote.api.js';
+import { getQuote } from '@/api/quote.api.ts';
 
 const FALLBACK_QUOTE = {
   quote: 'The only bad workout is the one that did not happen.',
@@ -32,7 +32,7 @@ try {
 </div>
 
 <script>
-  import { initQuote } from './quote.client.js';
+  import { initQuote } from './quote.client.ts';
 
   initQuote(document.querySelector('[data-component="quote"]'));
 </script>

@@ -1,22 +1,20 @@
-import {
-  getFavorites,
-  removeFavorite,
-} from '../../services/favorites.service.js';
-import { PAGE_LIMIT, STORAGE_KEYS } from '../../utils/constants.js';
-import { openExerciseModal } from '../exercise-modal/exercise-modal.js';
-import { bindPaginationControls } from '../pagination/pagination-controls.js';
-import { renderPagination } from '../pagination/pagination-view.js';
-import { createListStatus } from '../shared/list-status.js';
-import { renderFavoriteExerciseCard } from './render-exercise-card.js';
+import { openExerciseModal } from '@/components/exercise-modal/exercise-modal.ts';
+import { bindPaginationControls } from '@/components/pagination/pagination-controls.ts';
+import { renderPagination } from '@/components/pagination/pagination-view.ts';
+import { createListStatus } from '@/components/shared/list-status.ts';
+import { PAGE_LIMIT } from '@/constants/patterns.ts';
+import { STORAGE_KEYS } from '@/constants/storage-keys.ts';
+import { getFavorites, removeFavorite } from '@/services/favorites.service.ts';
+import type { Exercise } from '@/types/exercise.ts';
+import type { PaginationState } from '@/types/pagination.ts';
+import { renderFavoriteExerciseCard } from './render-exercise-card.ts';
 
 const status = createListStatus('favorites-list');
 
-/**
- * @param {unknown[]} items
- * @param {number} page
- * @returns {{ items: unknown[], page: number, totalPages: number }}
- */
-function paginate(items, page) {
+function paginate(
+  items: Exercise[],
+  page: number,
+): PaginationState & { items: Exercise[] } {
   const totalPages = Math.max(
     1,
     Math.ceil(items.length / PAGE_LIMIT.EXERCISES),
@@ -31,11 +29,7 @@ function paginate(items, page) {
   };
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initFavoritesList(root) {
+export function initFavoritesList(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
   const listRoot = root.querySelector('.favorites-list');
@@ -48,8 +42,7 @@ export function initFavoritesList(root) {
     return () => {};
   }
 
-  /** @type {import('../../types/exercise').Exercise[]} */
-  let favorites = [];
+  let favorites: Exercise[] = [];
   let currentPage = 1;
 
   const renderList = () => {
@@ -68,11 +61,7 @@ export function initFavoritesList(root) {
     currentPage = slice.page;
 
     listRoot.innerHTML = slice.items
-      .map((item) =>
-        renderFavoriteExerciseCard(
-          /** @type {Record<string, unknown>} */ (item),
-        ),
-      )
+      .map((item) => renderFavoriteExerciseCard(item))
       .join('');
 
     renderPagination(paginationRoot, {
@@ -81,7 +70,7 @@ export function initFavoritesList(root) {
     });
   };
 
-  const refresh = (/** @type {number} */ page = currentPage) => {
+  const refresh = (page = currentPage) => {
     favorites = getFavorites();
     currentPage = page;
     renderList();
@@ -95,8 +84,8 @@ export function initFavoritesList(root) {
     },
   });
 
-  const onClick = (/** @type {Event} */ event) => {
-    const target = /** @type {HTMLElement} */ (event.target);
+  const onClick = (event: Event) => {
+    const target = event.target as HTMLElement;
     const removeButton = target.closest('[data-remove-id]');
 
     if (removeButton && listRoot.contains(removeButton)) {
@@ -124,7 +113,7 @@ export function initFavoritesList(root) {
     }
   };
 
-  const onStorage = (/** @type {StorageEvent} */ event) => {
+  const onStorage = (event: StorageEvent) => {
     if (event.key !== null && event.key !== STORAGE_KEYS.FAVORITES) return;
 
     refresh(currentPage);

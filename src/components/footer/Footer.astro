@@ -1,8 +1,15 @@
+---
+import { ROUTES } from '@/constants/navigation';
+import { withBase } from '@/utils/withBase';
+
+const homeHref = withBase(ROUTES.HOME);
+---
+
 <footer class="footer">
   <div class="container footer__container" data-component="footer">
     <div class="footer__top">
       <div class="footer__brand">
-        <a class="footer__logo" href="/" aria-label="Go to home page">
+        <a class="footer__logo" href={homeHref} aria-label="Go to home page">
           <svg
             class="footer__logo-icon"
             width="132"
@@ -126,7 +133,7 @@
 </footer>
 
 <script>
-  import { initFooter } from './footer.client.js';
+  import { initFooter } from './footer.client.ts';
 
   initFooter(document.querySelector('[data-component="footer"]'));
 </script>

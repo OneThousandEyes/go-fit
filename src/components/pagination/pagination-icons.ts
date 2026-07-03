@@ -1,4 +1,4 @@
-import { renderSpriteIcon, SPRITE_ICON } from '../../utils/sprite-icon.js';
+import { renderSpriteIcon, SPRITE_ICON } from '@/utils/sprite-icon.ts';
 
 const CHEVRON_OPTIONS = {
   className: 'pagination__icon',
@@ -7,22 +7,14 @@ const CHEVRON_OPTIONS = {
   viewBox: '0 0 20 20',
 };
 
-/**
- * @param {'left' | 'right'} direction
- * @returns {string}
- */
-export function renderChevronIcon(direction) {
+export function renderChevronIcon(direction: 'left' | 'right'): string {
   const iconId =
     direction === 'left' ? SPRITE_ICON.CHEVRON_LEFT : SPRITE_ICON.CHEVRON_RIGHT;
 
   return renderSpriteIcon(iconId, CHEVRON_OPTIONS);
 }
 
-/**
- * @param {'left' | 'right'} direction
- * @returns {string}
- */
-export function renderDoubleChevronIcon(direction) {
+export function renderDoubleChevronIcon(direction: 'left' | 'right'): string {
   const icon = renderChevronIcon(direction);
   return `<span class="pagination__icon-set pagination__icon-set--double">${icon}${icon}</span>`;
 }

@@ -1,27 +1,23 @@
-import { getFilters } from '../../api/filters.api.js';
-import { getState, setState } from '../../services/store.service.js';
-import { DEFAULT_FILTER, LOADER } from '../../utils/constants.js';
-import { renderCategoryCard } from '../category-card/render-category-card.js';
-import { createListStatus } from '../shared/list-status.js';
-import { bindStoreIsland } from '../shared/store-island.js';
+import { getFilters } from '@/api/filters.api.ts';
+import { renderCategoryCard } from '@/components/category-card/render-category-card.ts';
+import { createListStatus } from '@/components/shared/list-status.ts';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { DEFAULT_FILTER } from '@/constants/filters.ts';
+import { LOADER } from '@/constants/loaders.ts';
+import { getState, setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import type { CategoryItem } from '@/types/category.ts';
 
 const BLOCK = 'category-list';
 const status = createListStatus(BLOCK);
 
-/** @type {string | null} */
-let inflightKey = null;
+let inflightKey: string | null = null;
 
-/**
- * @typedef {import('../../services/store.service.js').AppState} AppState
- * @typedef {{ name?: unknown, filter?: unknown, imgURL?: unknown }} CategoryItem
- */
-
-/**
- * @param {HTMLElement} root
- * @param {CategoryItem[]} items
- * @param {string} caption
- */
-function render(root, items, caption) {
+function render(
+  root: HTMLElement,
+  items: CategoryItem[],
+  caption: string,
+): void {
   status.hideRefreshing(root);
 
   if (!items.length) {
@@ -47,10 +43,7 @@ function render(root, items, caption) {
   });
 }
 
-/**
- * @param {HTMLElement} root
- */
-async function loadCategories(root) {
+async function loadCategories(root: HTMLElement): Promise<void> {
   const { activeFilter, page } = getState();
   const requestKey = `${activeFilter}:${page}`;
 
@@ -83,8 +76,7 @@ async function loadCategories(root) {
 
     render(root, results, current.activeFilter);
 
-    /** @type {Partial<AppState>} */
-    const patch = {};
+    const patch: Partial<AppState> = {};
 
     if (current.totalPages !== totalPages) patch.totalPages = totalPages;
     if (current.page !== responsePage) patch.page = responsePage;
@@ -98,14 +90,9 @@ async function loadCategories(root) {
   }
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initCategoryList(root) {
+export function initCategoryList(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
-  /** @type {string} */
   let lastKey = '';
 
   const { activeFilter, category, page } = getState();
@@ -133,8 +120,8 @@ export function initCategoryList(root) {
 
   root.dataset.hydrated = 'true';
 
-  const onClick = (/** @type {Event} */ event) => {
-    const target = /** @type {HTMLElement} */ (event.target);
+  const onClick = (event: Event) => {
+    const target = event.target as HTMLElement;
     const card = target.closest('.category-card');
 
     if (!card || !root.contains(card)) return;
@@ -147,7 +134,7 @@ export function initCategoryList(root) {
     setState({ category: { name, filter }, page: 1, keyword: '' });
   };
 
-  const sync = (/** @type {Readonly<AppState>} */ state) => {
+  const sync = (state: Readonly<AppState>) => {
     const isCategoriesView = state.category === null;
 
     root.hidden = !isCategoriesView;

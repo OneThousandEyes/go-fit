@@ -1,17 +1,13 @@
-import { FILTER } from '../../utils/constants.js';
-import { escapeHtml } from '../../utils/escape-html.js';
+import { FILTER } from '@/constants/filters.ts';
+import { escapeHtml } from '@/utils/escape-html.ts';
 
 export const FILTER_TABS = [
   FILTER.MUSCLES,
   FILTER.BODY_PARTS,
   FILTER.EQUIPMENT,
-];
+] as const;
 
-/**
- * @param {string} activeFilter
- * @returns {string}
- */
-export function renderFiltersMarkup(activeFilter) {
+export function renderFiltersMarkup(activeFilter: string): string {
   return FILTER_TABS.map((label) => {
     const isActive = label === activeFilter;
 

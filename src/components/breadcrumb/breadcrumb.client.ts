@@ -1,16 +1,9 @@
-import { setState } from '../../services/store.service.js';
-import { escapeHtml } from '../../utils/escape-html.js';
-import { bindStoreIsland } from '../shared/store-island.js';
+import { bindStoreIsland } from '@/components/shared/store-island.ts';
+import { setState } from '@/services/store.service.ts';
+import type { AppState } from '@/types/app-state.ts';
+import { escapeHtml } from '@/utils/escape-html.ts';
 
-/**
- * @typedef {import('../../services/store.service.js').AppState} AppState
- */
-
-/**
- * @param {HTMLElement} root
- * @param {Readonly<AppState>} state
- */
-function render(root, state) {
+function render(root: HTMLElement, state: Readonly<AppState>): void {
   if (!state.category) {
     if (root.querySelector('.breadcrumb__root:not(.breadcrumb__root--link)')) {
       return;
@@ -32,15 +25,11 @@ function render(root, state) {
     <span class="breadcrumb__category">${escapeHtml(state.category.name)}</span>`;
 }
 
-/**
- * @param {HTMLElement | null} root
- * @returns {() => void} teardown
- */
-export function initBreadcrumb(root) {
+export function initBreadcrumb(root: HTMLElement | null): () => void {
   if (!root) return () => {};
 
-  const onClick = (/** @type {Event} */ event) => {
-    const target = /** @type {HTMLElement} */ (event.target);
+  const onClick = (event: Event) => {
+    const target = event.target as HTMLElement;
     const link = target.closest('.breadcrumb__root--link');
 
     if (!link || !root.contains(link)) return;
@@ -48,7 +37,7 @@ export function initBreadcrumb(root) {
     setState({ category: null, page: 1, keyword: '' });
   };
 
-  const sync = (/** @type {Readonly<AppState>} */ state) => render(root, state);
+  const sync = (state: Readonly<AppState>) => render(root, state);
 
   return bindStoreIsland(sync, { root, listeners: [['click', onClick]] });
 }

@@ -1,15 +1,13 @@
-import { escapeHtml } from '../../utils/escape-html.js';
+import type { PaginationState } from '@/types/pagination.ts';
+import { escapeHtml } from '@/utils/escape-html.ts';
 import {
   renderChevronIcon,
   renderDoubleChevronIcon,
-} from './pagination-icons.js';
+} from './pagination-icons.ts';
 
-/**
- * @param {number} page
- * @param {number} totalPages
- * @returns {Array<number | 'ellipsis'>}
- */
-export function buildPageItems(page, totalPages) {
+export type PageItem = number | 'ellipsis';
+
+export function buildPageItems(page: number, totalPages: number): PageItem[] {
   if (totalPages <= 3) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
@@ -25,13 +23,11 @@ export function buildPageItems(page, totalPages) {
   return ['ellipsis', page - 1, page, page + 1, 'ellipsis'];
 }
 
-/**
- * @param {string} action
- * @param {number} page
- * @param {number} totalPages
- * @returns {number | null}
- */
-export function resolveActionPage(action, page, totalPages) {
+export function resolveActionPage(
+  action: string,
+  page: number,
+  totalPages: number,
+): number | null {
   switch (action) {
     case 'first':
       return 1;
@@ -46,14 +42,12 @@ export function resolveActionPage(action, page, totalPages) {
   }
 }
 
-/**
- * @param {string} action
- * @param {string} label
- * @param {string} icon
- * @param {boolean} isDisabled
- * @returns {string}
- */
-function renderArrowButton(action, label, icon, isDisabled) {
+function renderArrowButton(
+  action: string,
+  label: string,
+  icon: string,
+  isDisabled: boolean,
+): string {
   const disabledAttr = isDisabled ? ' disabled' : '';
 
   return `
@@ -67,12 +61,7 @@ function renderArrowButton(action, label, icon, isDisabled) {
     </button>`;
 }
 
-/**
- * @param {number | 'ellipsis'} item
- * @param {number} page
- * @returns {string}
- */
-function renderPageItem(item, page) {
+function renderPageItem(item: PageItem, page: number): string {
   if (item === 'ellipsis') {
     return `<span class="pagination__ellipsis" aria-hidden="true">...</span>`;
   }
@@ -91,11 +80,10 @@ function renderPageItem(item, page) {
     </button>`;
 }
 
-/**
- * @param {{ page: number, totalPages: number }} state
- * @returns {string}
- */
-export function renderPaginationMarkup({ page, totalPages }) {
+export function renderPaginationMarkup({
+  page,
+  totalPages,
+}: PaginationState): string {
   const isHidden = totalPages <= 1;
 
   if (isHidden) {
@@ -151,12 +139,11 @@ export function renderPaginationMarkup({ page, totalPages }) {
     ${nextArrows}`;
 }
 
-/**
- * @param {HTMLElement} root
- * @param {{ page: number, totalPages: number }} state
- */
-export function renderPagination(root, { page, totalPages }) {
-  const isHidden = totalPages <= 1;
+export function renderPagination(
+  root: HTMLElement,
+  state: PaginationState,
+): void {
+  const isHidden = state.totalPages <= 1;
 
   root.hidden = isHidden;
 
@@ -165,5 +152,5 @@ export function renderPagination(root, { page, totalPages }) {
     return;
   }
 
-  root.innerHTML = renderPaginationMarkup({ page, totalPages });
+  root.innerHTML = renderPaginationMarkup(state);
 }
