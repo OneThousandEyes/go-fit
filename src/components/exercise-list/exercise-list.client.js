@@ -4,6 +4,7 @@ import { FILTER_PARAM, LOADER } from '../../utils/constants.js';
 import { renderExerciseCard } from '../exercise-card/render-exercise-card.js';
 import { createListStatus } from '../shared/list-status.js';
 import { bindStoreIsland } from '../shared/store-island.js';
+import { openExerciseModal } from '../exercise-modal/exercise-modal.js';
 
 const BLOCK = 'exercise-list';
 const status = createListStatus(BLOCK);
@@ -114,6 +115,20 @@ export function initExerciseList(root) {
   /** @type {string} */
   let lastKey = '';
 
+  const onClick = (/** @type {Event} */ event) => {
+    const target = /** @type {HTMLElement} */ (event.target);
+
+    const card = target.closest('.exercise-card');
+    if (!card || !root.contains(card)) return;
+
+    const startBtn = card.querySelector('.exercise-card__start');
+    const id = startBtn?.getAttribute('data-id');
+
+    if (!id) return;
+
+    openExerciseModal(id);
+  };
+
   const sync = (/** @type {Readonly<AppState>} */ state) => {
     const isExercisesView = state.category !== null;
 
@@ -132,5 +147,5 @@ export function initExerciseList(root) {
     loadExercises(root);
   };
 
-  return bindStoreIsland(sync, { root });
+  return bindStoreIsland(sync, { root, listeners: [['click', onClick]] });
 }
