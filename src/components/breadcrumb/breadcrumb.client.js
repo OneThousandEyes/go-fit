@@ -12,7 +12,17 @@ import { bindStoreIsland } from '../shared/store-island.js';
  */
 function render(root, state) {
   if (!state.category) {
+    if (root.querySelector('.breadcrumb__root:not(.breadcrumb__root--link)')) {
+      return;
+    }
+
     root.innerHTML = `<span class="breadcrumb__root">Exercises</span>`;
+    return;
+  }
+
+  const categoryName = root.querySelector('.breadcrumb__category')?.textContent;
+
+  if (categoryName === state.category.name) {
     return;
   }
 
