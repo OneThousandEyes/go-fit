@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const SITE_URL = 'https://deluminor.github.io';
+const SITE_URL = 'https://onethousandeyes.github.io';
 const BASE_PATH = process.env.ASTRO_BASE ?? '/';
 
 export default defineConfig({

@@ -494,7 +494,7 @@ npm run build
 
 ## Performance
 
-Production build audited with [PageSpeed Insights](https://pagespeed.web.dev/) on **3 Jul 2026** against https://deluminor.github.io/go-fit/.
+Production build audited with [PageSpeed Insights](https://pagespeed.web.dev/) on **3 Jul 2026** against https://onethousandeyes.github.io/go-fit/.
 
 | Metric         | Mobile | Desktop |
 | -------------- | -----: | ------: |
@@ -528,7 +528,7 @@ Deployed to **GitHub Pages** by the [`deploy.yml`](.github/workflows/deploy.yml)
 
 Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once in the repository.
 
-`site` and `base` are configured in [`astro.config.mjs`](astro.config.mjs): `site: https://deluminor.github.io`, `base: /go-fit`. For a different repo name or a custom domain, override the base via the `ASTRO_BASE` env var (e.g. `ASTRO_BASE=/` for a root/custom-domain deploy).
+`site` and `base` are configured in [`astro.config.mjs`](astro.config.mjs): `site: https://onethousandeyes.github.io`, `base: /go-fit`. For a different repo name or a custom domain, override the base via the `ASTRO_BASE` env var (e.g. `ASTRO_BASE=/` for a root/custom-domain deploy).
 
 ## Contributing
 
